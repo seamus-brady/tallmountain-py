@@ -7,11 +7,26 @@
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from flask import Flask, request, jsonify
-from flask_restful import Api, Resource
-import threading
-import queue
-import time
+import os
+import sys
+from pathlib import Path
+
+
+# path fix for imports ----------------------------------------------
+path = Path(os.path.dirname(os.path.realpath(__file__)))
+print(path.absolute().__str__())
+sys.path.append(path.absolute().__str__())
+sys.path.append(path.parent.absolute().__str__())
+sys.path.append(path.parent.parent.absolute().__str__())
+sys.path.append(path.parent.parent.parent.absolute().__str__())
+# path fix for imports ----------------------------------------------
+
+from flask import Flask, request # noqa: E402
+from flask_restful import Api, Resource  # noqa: E402
+import threading # noqa: E402
+import queue # noqa: E402
+from src.tallmountain.llm.llm_facade import LLM # noqa: E402
+from src.tallmountain.llm.llm_messages import LLMMessages # noqa: E402
 
 app = Flask(__name__)
 api = Api(app)
@@ -26,15 +41,14 @@ def background_task():
     while True:
         try:
             # Retrieve a message from the queue
-            message = message_queue.get(timeout=1)  # Waits 1 second if no message is available
-            print(f"Background thread received: {message}")
-
-            # Simulate processing
-            time.sleep(2)
-            processed_response = f"Processed: {message}"
+            user_message = message_queue.get(timeout=5)
+            llm: LLM = LLM()
+            llm_messages = LLMMessages()
+            llm_messages = llm_messages.build(user_message, llm_messages.USER)
+            bot_response: str = llm.do_string_completion(messages=llm_messages.messages)
 
             # Put the processed response into the response queue
-            response_queue.put(processed_response)
+            response_queue.put(bot_response)
         except queue.Empty:
             # No message received; continue waiting
             pass
@@ -52,7 +66,7 @@ class Chat(Resource):
 
         # Wait for a response from the background thread
         try:
-            bot_response = response_queue.get(timeout=5)  # Wait for up to 5 seconds
+            bot_response = response_queue.get(timeout=60)
             return {'bot': bot_response}, 200
         except queue.Empty:
             return {'error': 'No response from background task'}, 504

@@ -25,8 +25,6 @@ from flask import (  # noqa: E402
     request,
 )
 
-from src.tallmountain.llm.llm_facade import LLM  # noqa: E402
-from src.tallmountain.llm.llm_messages import LLMMessages  # noqa: E402
 from src.tallmountain.util.file_path_util import FilePathUtil  # noqa: E402
 
 app = Flask(__name__)
@@ -47,10 +45,7 @@ def index():
 @app.route("/chat", methods=["POST"])
 def chat() -> str:
     user_message = request.form.get("message", "")
-    llm: LLM = LLM()
-    llm_messages = LLMMessages()
-    llm_messages = llm_messages.build(user_message, llm_messages.USER)
-    bot_response: str = llm.do_string_completion(messages=llm_messages.messages)
+    bot_response = get_bot_response(user_message)
     response_html = f"""
     <div class="message-container user-message-container">
         <img src="https://img.icons8.com/color/48/000000/user.png" class="icon" alt="User Icon">
@@ -62,6 +57,18 @@ def chat() -> str:
     </div>
     """
     return response_html
+
+
+def get_bot_response(user_message: str) -> str:
+    import requests
+
+    url = "http://127.0.0.1:10000/chat"
+    data = {"message": user_message}
+    response = requests.post(url, json=data)
+    if response.status_code == 200:
+        return response.json().get("bot")
+    else:
+        return f"Error: {response.json()}"
 
 
 if __name__ == "__main__":
