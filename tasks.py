@@ -63,3 +63,8 @@ def checks(c):
     bandit(c)
     test(c)
 
+
+@task
+def chat_ui(c):
+    print("Running chat ui...")
+    c.run("python src/chat_ui/main.py")

@@ -13,6 +13,9 @@ from pathlib import Path
 
 # a class for handling file paths in the app
 class FilePathUtil:
+
+    WWW_ROOT = "src/chat_ui/www"
+
     @staticmethod
     def app_root_path() -> str:
         script_path: Path = Path(__file__)
@@ -22,6 +25,10 @@ class FilePathUtil:
     def repo_root_path() -> str:
         script_path: Path = Path(__file__)
         return script_path.parent.parent.parent.parent.absolute().__str__()
+
+    @staticmethod
+    def www_root_path() -> str:
+        return FilePathUtil.append_path_to_repo_path(FilePathUtil.WWW_ROOT)
 
     @staticmethod
     def append_path_to_app_path(path_str: str) -> str:

@@ -6,26 +6,47 @@
 #  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+import os
+import sys
+from pathlib import Path
 
-from flask import Flask, request, render_template_string, jsonify
-import time
+# path fix for imports ----------------------------------------------
+path = Path(os.path.dirname(os.path.realpath(__file__)))
+print(path.absolute().__str__())
+sys.path.append(path.absolute().__str__())
+sys.path.append(path.parent.absolute().__str__())
+sys.path.append(path.parent.parent.absolute().__str__())
+sys.path.append(path.parent.parent.parent.absolute().__str__())
+# path fix for imports ----------------------------------------------
 
-from src.tallmountain.llm.llm_facade import LLM
-from src.tallmountain.llm.llm_messages import LLMMessages
+from flask import (  # noqa: E402
+    Flask,
+    render_template_string,
+    request,
+)
+
+from src.tallmountain.llm.llm_facade import LLM  # noqa: E402
+from src.tallmountain.llm.llm_messages import LLMMessages  # noqa: E402
+from src.tallmountain.util.file_path_util import FilePathUtil  # noqa: E402
 
 app = Flask(__name__)
 
 # Load the HTML content from the provided file
-with open('/home/seamus/GitHub/pbi/tallmountain-prototype/src/chat_ui/www/chat_ui.html', 'r') as file:
+WEB_UI_TEMPLATE: str = "chat_ui.html"
+WEB_ROOT: str = os.path.join(FilePathUtil.www_root_path(), WEB_UI_TEMPLATE)
+
+with open(WEB_ROOT, "r") as file:
     chat_ui_html = file.read()
 
-@app.route('/')
+
+@app.route("/")
 def index():
     return render_template_string(chat_ui_html)
 
-@app.route('/chat', methods=['POST'])
-def chat():
-    user_message = request.form.get('message', '')
+
+@app.route("/chat", methods=["POST"])
+def chat() -> str:
+    user_message = request.form.get("message", "")
     llm: LLM = LLM()
     llm_messages = LLMMessages()
     llm_messages = llm_messages.build(user_message, llm_messages.USER)
@@ -42,5 +63,8 @@ def chat():
     """
     return response_html
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
+if __name__ == "__main__":
+    # if you want to run the app in debug mode, uncomment the line below
+    # app.run(debug=True)
+    app.run()
