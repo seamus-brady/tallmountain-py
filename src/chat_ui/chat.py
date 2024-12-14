@@ -65,6 +65,4 @@ def chat() -> str:
 
 
 if __name__ == "__main__":
-    # if you want to run the app in debug mode, uncomment the line below
-    # app.run(debug=True)
-    app.run()
+    app.run(debug=True, threaded=True, port=10001)

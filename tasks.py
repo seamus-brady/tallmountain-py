@@ -67,4 +67,9 @@ def checks(c):
 @task
 def chat_ui(c):
     print("Running chat ui...")
-    c.run("python src/chat_ui/main.py")
+    c.run("python src/chat_ui/chat.py")
+
+@task
+def appserver(c):
+    print("Running chat server...")
+    c.run("python src/tallmountain/app.py")
