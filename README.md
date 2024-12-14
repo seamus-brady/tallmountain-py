@@ -1,2 +1,3 @@
-# tallmountain-prototype
+# TallMountain Prototype
+
 An AI agent platform

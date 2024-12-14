@@ -1,0 +1,14 @@
+bandit
+black
+flake8
+flask
+instructor
+invoke
+isort
+mypy
+openai
+pydantic
+python-dotenv
+litellm
+uuid6
+shortuuid
