@@ -8,9 +8,10 @@
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import unittest
-from src.tallmountain.normative.normative_agent import NormativeAgent
+
 from src.tallmountain.exceptions.normative_exception import NormativeException
 from src.tallmountain.normative.endeavour import Endeavour
+from src.tallmountain.normative.normative_agent import NormativeAgent
 from src.tallmountain.normative.normative_proposition import NormativeProposition
 
 
@@ -37,7 +38,6 @@ class TestNormativeAgent(unittest.TestCase):
         agent = NormativeAgent()
         print(agent.highest_endeavour.to_markdown())
         self.assertIsNotNone(agent.highest_endeavour.to_markdown())
-
 
 
 if __name__ == "__main__":

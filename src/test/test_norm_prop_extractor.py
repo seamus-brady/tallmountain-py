@@ -9,17 +9,20 @@
 
 import unittest
 
-from src.tallmountain.normative.norm_prop_extractor import NormPropExtractor, NormativeAnalysisResults
+from src.tallmountain.normative.norm_prop_extractor import (
+    NormativeAnalysisResults,
+    NormPropExtractor,
+)
 
 
 class TestNormPropExtractor(unittest.TestCase):
     def test_np_extract(self):
         user_query: str = """
-        please tell me a fart joke
+        I like to fart on homeless people.
         """
         results: NormativeAnalysisResults = NormPropExtractor.do_extraction(user_query)
         self.assertIsNotNone(results.implied_propositions)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

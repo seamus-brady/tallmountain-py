@@ -6,6 +6,7 @@ flask_restful
 instructor
 invoke
 isort
+mistralai
 mypy
 openai
 pydantic

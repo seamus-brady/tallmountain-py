@@ -18,7 +18,9 @@ class ConfigUtil:
     APP_CONFIG_FILE: str = "src/config/app.ini"
     HIGHEST_ENDEAVOUR_JSON: str = "src/config/highest_endeavour.json"
     SYSTEM_ENDEAVOURS_JSON: str = "src/config/system_endeavours.json"
-    NORM_COMPARISON_SCORE_PROMPT: str = "src/config/prompts/norm_comparison_score.prompt"
+    NORM_COMPARISON_SCORE_PROMPT: str = (
+        "src/config/prompts/norm_comparison_score.prompt"
+    )
     SIMPLIFIED_NC: str = "src/config/prompts/simplified_nc.prompt"
 
     @staticmethod
@@ -54,7 +56,9 @@ class ConfigUtil:
     @staticmethod
     def highest_endeavour_json() -> str:
         try:
-            source_path = FilePathUtil.append_path_to_repo_path(ConfigUtil.HIGHEST_ENDEAVOUR_JSON)
+            source_path = FilePathUtil.append_path_to_repo_path(
+                ConfigUtil.HIGHEST_ENDEAVOUR_JSON
+            )
             return FilePathUtil.load_file_as_string(source_path)
         except Exception as error:  # noqa
             raise ConfigException(str(error))
@@ -62,7 +66,9 @@ class ConfigUtil:
     @staticmethod
     def system_endeavours_json() -> str:
         try:
-            source_path = FilePathUtil.append_path_to_repo_path(ConfigUtil.SYSTEM_ENDEAVOURS_JSON)
+            source_path = FilePathUtil.append_path_to_repo_path(
+                ConfigUtil.SYSTEM_ENDEAVOURS_JSON
+            )
             return FilePathUtil.load_file_as_string(source_path)
         except Exception as error:  # noqa
             raise ConfigException(str(error))
@@ -70,7 +76,9 @@ class ConfigUtil:
     @staticmethod
     def norm_comparison_score_prompt() -> str:
         try:
-            source_path = FilePathUtil.append_path_to_repo_path(ConfigUtil.NORM_COMPARISON_SCORE_PROMPT)
+            source_path = FilePathUtil.append_path_to_repo_path(
+                ConfigUtil.NORM_COMPARISON_SCORE_PROMPT
+            )
             return FilePathUtil.load_file_as_string(source_path)
         except Exception as error:  # noqa
             raise ConfigException(str(error))
@@ -78,7 +86,9 @@ class ConfigUtil:
     @staticmethod
     def simplified_nc_prompt() -> str:
         try:
-            source_path = FilePathUtil.append_path_to_repo_path(ConfigUtil.SIMPLIFIED_NC)
+            source_path = FilePathUtil.append_path_to_repo_path(
+                ConfigUtil.SIMPLIFIED_NC
+            )
             return FilePathUtil.load_file_as_string(source_path)
         except Exception as error:  # noqa
             raise ConfigException(str(error))
