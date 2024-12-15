@@ -10,6 +10,7 @@
 import unittest
 from pathlib import Path
 
+from src.tallmountain.exceptions.config_exception import ConfigException
 from src.tallmountain.util.config_util import ConfigUtil
 
 
@@ -30,6 +31,26 @@ class TestConfig(unittest.TestCase):
     def test_config_get_bool(self) -> None:
         setting: bool = ConfigUtil.get_bool("ignore", "test_bool")
         self.assertEqual(bool(setting), False)
+
+    def test_highest_endeavour_json(self):
+        result = ConfigUtil.highest_endeavour_json()
+        self.assertIsInstance(result, str)
+        self.assertTrue(len(result) > 0)
+
+    def test_system_endeavours_json(self):
+        result = ConfigUtil.system_endeavours_json()
+        self.assertIsInstance(result, str)
+        self.assertTrue(len(result) > 0)
+
+    def test_norm_comparison_score_prompt(self):
+        result = ConfigUtil.norm_comparison_score_prompt()
+        self.assertIsInstance(result, str)
+        self.assertTrue(len(result) > 0)
+
+    def test_simplified_nc_prompt(self):
+        result = ConfigUtil.simplified_nc_prompt()
+        self.assertIsInstance(result, str)
+        self.assertTrue(len(result) > 0)
 
 
 if __name__ == "__main__":

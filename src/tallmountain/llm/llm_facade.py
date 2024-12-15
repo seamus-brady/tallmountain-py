@@ -126,7 +126,6 @@ class LLM:
                 # all other errors
                 raise LLMException(str(error))
 
-    # noinspection PyMethodMayBeStatic
     def is_bad_request(self, error):
         return error.args is not None and (
             str(error.args[0]).__contains__("Error code: 400")

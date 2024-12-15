@@ -317,17 +317,22 @@
         }
     }});
 
-     function processMarkdown() {
+    // Ensure Markdown is processed after HTMX swaps in new content
+    document.body.addEventListener('htmx:afterSwap', function(event) {
+        processMarkdown(); // Reprocess markdown for newly added elements
+    });
+
+    // Call on page load
+    document.addEventListener('DOMContentLoaded', processMarkdown);
+
+    function processMarkdown() {
             document.querySelectorAll('.markdown').forEach(el => {
                 el.innerHTML = marked.parse(el.textContent);
             });
     }
 
-    // Call on page load
-    document.addEventListener('DOMContentLoaded', processMarkdown);
 
-    // Call on HTMX content swap
-    document.body.addEventListener('htmx:afterSwap', processMarkdown);
+
 </script>
 
 </body>

@@ -13,7 +13,6 @@ from pathlib import Path
 
 # a class for handling file paths in the app
 class FilePathUtil:
-
     WWW_ROOT = "src/chat_ui/www"
 
     @staticmethod
@@ -39,3 +38,13 @@ class FilePathUtil:
     def append_path_to_repo_path(path_str: str) -> str:
         app_root: str = FilePathUtil.repo_root_path()
         return os.path.join(app_root, path_str)
+
+    @staticmethod
+    def load_file_as_string(file_path: str) -> str:
+        try:
+            with open(file_path, 'r') as file:
+                content = file.read()
+            return content
+        except Exception as e:
+            print(f"Error reading file {file_path}: {e}")
+            return ""

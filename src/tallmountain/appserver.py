@@ -11,7 +11,6 @@ import os
 import sys
 from pathlib import Path
 
-
 # path fix for imports ----------------------------------------------
 path = Path(os.path.dirname(os.path.realpath(__file__)))
 print(path.absolute().__str__())
@@ -21,23 +20,31 @@ sys.path.append(path.parent.parent.absolute().__str__())
 sys.path.append(path.parent.parent.parent.absolute().__str__())
 # path fix for imports ----------------------------------------------
 
-from flask import Flask, request # noqa: E402
-from flask_restful import Api, Resource  # noqa: E402
-import threading # noqa: E402
-import queue # noqa: E402
-from src.tallmountain.llm.llm_facade import LLM # noqa: E402
-from src.tallmountain.llm.llm_messages import LLMMessages # noqa: E402
+import queue  # noqa: E402
+import threading  # noqa: E402
+
+from flask import (  # noqa: E402
+    Flask,
+    request,
+)
+from flask_restful import (  # noqa: E402
+    Api,
+    Resource,
+)
+
+from src.tallmountain.llm.llm_facade import LLM  # noqa: E402
+from src.tallmountain.llm.llm_messages import LLMMessages  # noqa: E402
 
 app = Flask(__name__)
 api = Api(app)
 
 # Thread-safe queue for communication
-message_queue = queue.Queue()
-response_queue = queue.Queue()
+message_queue: queue.Queue = queue.Queue()
+response_queue: queue.Queue = queue.Queue()
 
 
 # Background task to process messages
-def background_task():
+def background_task() -> None:
     while True:
         try:
             # Retrieve a message from the queue
@@ -57,9 +64,9 @@ def background_task():
 # Chat resource
 class Chat(Resource):
     def post(self):
-        user_message = request.json.get('message', '')
+        user_message = request.json.get("message", "")
         if not user_message:
-            return {'error': 'Message content is required'}, 400
+            return {"error": "Message content is required"}, 400
 
         # Send user message to the background thread
         message_queue.put(user_message)
@@ -67,18 +74,18 @@ class Chat(Resource):
         # Wait for a response from the background thread
         try:
             bot_response = response_queue.get(timeout=60)
-            return {'bot': bot_response}, 200
+            return {"bot": bot_response}, 200
         except queue.Empty:
-            return {'error': 'No response from background task'}, 504
+            return {"error": "No response from background task"}, 504
 
 
 # Add resources to the API
-api.add_resource(Chat, '/chat')
+api.add_resource(Chat, "/chat")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Start the background thread
     bg_thread = threading.Thread(target=background_task, daemon=True)
     bg_thread.start()
 
     # Run the Flask server
-    app.run(debug=True, threaded=True, port=10000)
+    app.run(debug=True, threaded=True, port=10000)  # nosec

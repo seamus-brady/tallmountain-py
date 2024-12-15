@@ -59,7 +59,6 @@ class LoggingUtil:
     def get_log_file_path(self) -> str:
         return os.path.join(self.log_file_dir, self.log_file_name)
 
-    # noinspection PyMethodMayBeStatic
     def get_log_file_dir(self) -> str:
         return FilePathUtil.append_path_to_repo_path(self.LOG_DIR)
 

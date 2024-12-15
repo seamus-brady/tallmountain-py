@@ -65,9 +65,14 @@ def checks(c):
 
 
 @task
+def types(c):
+    print("Installing mypy types...")
+    c.run("mypy --install-types")
+
+@task
 def chat_ui(c):
     print("Running chat ui...")
-    c.run("python src/chat_ui/chat.py")
+    c.run("python src/chat_ui/chat_ui.py")
 
 @task
 def appserver(c):

@@ -50,19 +50,15 @@ class LLMMessages:
     def messages(self, new_messages: List[Dict[str, str]]) -> None:
         self._messages = new_messages.copy()
 
-    # noinspection PyMethodMayBeStatic
     def build_user_prompt(self, content: str) -> Dict[str, str]:
         return {"role": "user", "content": content}
 
-    # noinspection PyMethodMayBeStatic
     def build_assistant_prompt(self, content: str) -> Dict[str, str]:
         return {"role": "assistant", "content": content}
 
-    # noinspection PyMethodMayBeStatic
     def build_system_prompt(self, content: str) -> Dict[str, str]:
         return {"role": "system", "content": content}
 
-    # noinspection PyMethodMayBeStatic
     def build_tool_prompt(
         self, tool_call: Any, function_name, content: str
     ) -> Dict[str, str]:
