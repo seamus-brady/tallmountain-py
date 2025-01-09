@@ -7,11 +7,15 @@
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from typing import (
+    List,
+    Optional,
+)
+
+from pydantic import BaseModel
+
 from src.tallmountain.llm.llm_facade import LLM
 from src.tallmountain.llm.llm_messages import LLMMessages
-
-from typing import List, Optional
-from pydantic import BaseModel
 
 
 class NormativePropositionType(BaseModel):
@@ -194,6 +198,6 @@ class NormPropExtractor:
         """
         llm_messages = llm_messages.build(prompt, llm_messages.USER)
         response: NormativeAnalysisResults = llm.do_instructor(
-            messages=llm_messages.messages,
-            response_model=NormativeAnalysisResults)
+            messages=llm_messages.messages, response_model=NormativeAnalysisResults
+        )
         return response

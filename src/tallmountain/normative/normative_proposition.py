@@ -7,7 +7,6 @@
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import logging
 import uuid
 from dataclasses import (
     dataclass,
@@ -25,6 +24,7 @@ class Operator(Enum):
      – it is ought to be that...
      – it is indifferent that...
     """
+
     INDIFFERENT = 1
     OUGHT = 2
     REQUIRED = 3
@@ -36,6 +36,7 @@ class Modality(Enum):
      – it is possible that...
      – it is impossible that...
     """
+
     POSSIBLE = "POSSIBLE"
     IMPOSSIBLE = "IMPOSSIBLE"
 
@@ -47,6 +48,7 @@ class ModalitySubscript(Enum):
      – it is theoretically possible that...
      – it is practically possible that...
     """
+
     LOGICAL = "LOGICAL"
     THEORETICAL = "THEORETICAL"
     PRACTICAL = "PRACTICAL"
@@ -73,7 +75,8 @@ class Level(Enum):
     Etiquette Norms     1500            Polite behavior and socially acceptable conduct in everyday interactions.
     Game Norms          1000            Rules specific to games, sports, or competitive activities.
     Aesthetic Norms     500             Standards of beauty, taste, or artistic expression.
-        """
+    """
+
     ETHICAL_MORAL = 6000
     LEGAL = 5000
     PRUDENTIAL = 4500
@@ -105,15 +108,17 @@ class NormativeProposition:
     LOGGER = LoggingUtil.instance("<NormativeProposition>")
 
     @classmethod
-    def from_dict(cls, data: dict) -> 'NormativeProposition':
+    def from_dict(cls, data: dict) -> "NormativeProposition":
         try:
             return cls(
-                uuid=data.get('uuid', str(uuid.uuid4())),
-                proposition_value=data.get('proposition_value', "Unknown"),
-                operator=Operator[data.get('operator', "INDIFFERENT")],
-                level=Level[data.get('level', "ETIQUETTE")],
-                modality=Modality[data.get('modality', "IMPOSSIBLE")],
-                modal_subscript=ModalitySubscript[data.get('modality-subscript', "NONE")],
+                uuid=data.get("uuid", str(uuid.uuid4())),
+                proposition_value=data.get("proposition_value", "Unknown"),
+                operator=Operator[data.get("operator", "INDIFFERENT")],
+                level=Level[data.get("level", "ETIQUETTE")],
+                modality=Modality[data.get("modality", "IMPOSSIBLE")],
+                modal_subscript=ModalitySubscript[
+                    data.get("modality-subscript", "NONE")
+                ],
             )
         except KeyError as e:
             raise ValueError(f"Invalid data for NormativeProposition: missing key {e}")

@@ -42,7 +42,7 @@ class FilePathUtil:
     @staticmethod
     def load_file_as_string(file_path: str) -> str:
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path, "r") as file:
                 content = file.read()
             return content
         except Exception as e:

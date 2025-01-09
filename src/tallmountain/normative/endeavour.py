@@ -25,6 +25,7 @@ class Comprehensiveness(Enum):
     Comprehensiveness Determines Escalation: When two endeavours conflict, and one is more comprehensive than the
     other, the norms of the more comprehensive endeavour are elevated to a higher normative level.
     """
+
     HIGH = "HIGH"
     DEFAULT = "DEFAULT"
     LOW = "LOW"
@@ -35,6 +36,7 @@ class Endeavour:
     """
     An endeavour of an agent. Manages a set of NormProps.
     """
+
     name: str
     description: str
     uuid: str = field(default_factory=lambda: str(uuid.uuid4()))

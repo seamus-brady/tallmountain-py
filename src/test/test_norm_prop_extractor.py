@@ -9,7 +9,10 @@
 
 import unittest
 
-from src.tallmountain.normative.norm_prop_extractor import NormPropExtractor, NormativeAnalysisResults
+from src.tallmountain.normative.norm_prop_extractor import (
+    NormativeAnalysisResults,
+    NormPropExtractor,
+)
 
 
 class TestNormPropExtractor(unittest.TestCase):
@@ -21,5 +24,5 @@ class TestNormPropExtractor(unittest.TestCase):
         self.assertIsNotNone(results.implied_propositions)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
