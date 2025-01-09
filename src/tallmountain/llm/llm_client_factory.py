@@ -13,7 +13,6 @@
 #
 #
 from src.tallmountain.exceptions.llm_exception import LLMException
-from src.tallmountain.llm.clients.mistral_ai import MistralAPIClient
 from src.tallmountain.llm.clients.openai import OpenAIClient
 from src.tallmountain.llm.llm_client import LLMClient
 from src.tallmountain.util.config_util import ConfigUtil
@@ -25,7 +24,6 @@ class LLMClientFactory:
     """
 
     OPENAI_PROVIDER_STRING = "OpenAIClient"
-    MISTRAL_API_PROVIDER_STRING = "MistralAPIClient"
 
     @staticmethod
     def llm_client() -> LLMClient:
@@ -37,8 +35,6 @@ class LLMClientFactory:
                 raise LLMException("No default_llm_provider found!")
             elif default_llm_provider == LLMClientFactory.OPENAI_PROVIDER_STRING:
                 return OpenAIClient()
-            elif default_llm_provider == LLMClientFactory.MISTRAL_API_PROVIDER_STRING:
-                return MistralAPIClient()
             else:
                 raise LLMException("No default_llm_provider found!")
         except Exception as error:

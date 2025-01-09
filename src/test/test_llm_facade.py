@@ -42,7 +42,7 @@ class TestLLMFacade(unittest.TestCase):
         response: str = llm.do_completion(messages=llm_messages.messages)
         self.assertIsNotNone(response)
 
-    def test_llm_instructor(self):
+    def test_llm_instructor(self) -> None:
         class UserInfo(BaseModel):
             name: str
             age: int

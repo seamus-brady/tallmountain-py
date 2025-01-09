@@ -20,7 +20,7 @@ class NormativeAgent:
     A class for managing the system's endeavours
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.highest_endeavour: Endeavour = self.load_highest_endeavour()
         self.system_endeavours: List[Endeavour] = self.load_system_endeavours()
 

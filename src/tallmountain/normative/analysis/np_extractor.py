@@ -41,13 +41,20 @@ class NormativeAnalysisResults(BaseModel):
 class NormPropExtractor:
     """Extracts normative propositions from a given input statement."""
 
-    MAX_EXTRACTED_NORMS: int = ConfigUtil.get_int("norm_prop_extractor", "max_extracted_norms")
+    MAX_EXTRACTED_NORMS: int = ConfigUtil.get_int(
+        "norm_prop_extractor", "max_extracted_norms"
+    )
 
     LOGGER = LoggingUtil.instance("<NormPropExtractor>")
 
-    def extract_normative_propositions(self, user_query: str) -> List[NormativeProposition]:
+    def extract_normative_propositions(
+        self, user_query: str
+    ) -> List[NormativeProposition]:
         results = self.do_extraction(user_query)
-        if results.implied_propositions and results.implied_propositions.NormativeProposition:
+        if (
+            results.implied_propositions
+            and results.implied_propositions.NormativeProposition
+        ):
             return [
                 NormativeProposition.from_dict(np.model_dump())
                 for np in results.implied_propositions.NormativeProposition

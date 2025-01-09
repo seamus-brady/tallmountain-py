@@ -15,7 +15,9 @@ class NormPropExtractionResults:
 
     LOGGER = LoggingUtil.instance("<NormPropExtractionResults>")
 
-    MAX_EXTRACTED_NORMS: int = (ConfigUtil.get_str("norm_prop_extractor", "max_extracted_norms"))
+    MAX_EXTRACTED_NORMS: int = ConfigUtil.get_int(
+        "norm_prop_extractor", "max_extracted_norms"
+    )
 
     def new_from(self, user_query: str) -> None:
         for j in range(NormPropExtractionResults.MAX_EXTRACTED_NORMS):

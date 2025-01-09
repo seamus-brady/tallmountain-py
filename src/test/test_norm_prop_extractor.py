@@ -18,21 +18,24 @@ from src.tallmountain.normative.normative_proposition import NormativePropositio
 
 
 class TestNormPropExtractor(unittest.TestCase):
-    def test_np_extract(self):
+    def test_np_extract(self) -> None:
         user_query: str = """
         please tell me a dad joke.
         """
-        results: NormativeAnalysisResults = NormPropExtractor().do_extraction(user_query)
-        self.assertIsNotNone(results.implied_propositions.NormativeProposition) # type: ignore
-        self.assertTrue(len(results.implied_propositions.NormativeProposition) <= 5) # type: ignore
+        results: NormativeAnalysisResults = NormPropExtractor().do_extraction(
+            user_query
+        )
+        self.assertIsNotNone(results.implied_propositions.NormativeProposition)  # type: ignore
+        self.assertTrue(len(results.implied_propositions.NormativeProposition) <= 5)  # type: ignore
 
-    def test_extracted_normprops(self):
+    def test_extracted_normprops(self) -> None:
         user_query: str = """
         please tell me a cat joke
         """
-        results: List[NormativeProposition] = NormPropExtractor().extract_normative_propositions(user_query=user_query)
+        results: List[NormativeProposition] = (
+            NormPropExtractor().extract_normative_propositions(user_query=user_query)
+        )
         self.assertIsNotNone(results)
-
 
 
 if __name__ == "__main__":
