@@ -9,7 +9,6 @@
 
 import unittest
 
-from src.tallmountain.exceptions.normative_exception import NormativeException
 from src.tallmountain.normative.endeavour import Endeavour
 from src.tallmountain.normative.normative_agent import NormativeAgent
 from src.tallmountain.normative.normative_proposition import NormativeProposition

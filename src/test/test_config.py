@@ -10,7 +10,6 @@
 import unittest
 from pathlib import Path
 
-from src.tallmountain.exceptions.config_exception import ConfigException
 from src.tallmountain.util.config_util import ConfigUtil
 
 
