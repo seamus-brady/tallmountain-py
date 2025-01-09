@@ -16,6 +16,9 @@ from pydantic import BaseModel
 
 from src.tallmountain.llm.llm_facade import LLM
 from src.tallmountain.llm.llm_messages import LLMMessages
+from src.tallmountain.normative.normative_proposition import NormativeProposition
+from src.tallmountain.util.config_util import ConfigUtil
+from src.tallmountain.util.logging_util import LoggingUtil
 
 
 class NormativePropositionType(BaseModel):
@@ -38,9 +41,20 @@ class NormativeAnalysisResults(BaseModel):
 class NormPropExtractor:
     """Extracts normative propositions from a given input statement."""
 
-    @staticmethod
-    def do_extraction(user_query: str) -> NormativeAnalysisResults:
+    MAX_EXTRACTED_NORMS: int = ConfigUtil.get_int("norm_prop_extractor", "max_extracted_norms")
 
+    LOGGER = LoggingUtil.instance("<NormPropExtractor>")
+
+    def extract_normative_propositions(self, user_query: str) -> List[NormativeProposition]:
+        results = self.do_extraction(user_query)
+        if results.implied_propositions and results.implied_propositions.NormativeProposition:
+            return [
+                NormativeProposition.from_dict(np.model_dump())
+                for np in results.implied_propositions.NormativeProposition
+            ]
+        return []
+
+    def do_extraction(self, user_query: str) -> NormativeAnalysisResults:
         llm: LLM = LLM()
         llm_messages = LLMMessages()
         llm_messages = llm_messages.build(
@@ -95,7 +109,7 @@ class NormPropExtractor:
                 - Sentiment Analysis: Humor often involves positive but non-serious tone shifts.
         - Avoid providing any analysis or commentary on the ethics, validity, or implications of these statements, 
           simply extract and rewrite them as a list of propositions the author might state.
-        - You must not extract more than 5 normative propositions.
+        - You must not extract more than {NormPropExtractor.MAX_EXTRACTED_NORMS} normative propositions.
 
         == STEP 2: Pause and Reflect ==
 
