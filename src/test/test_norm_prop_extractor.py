@@ -22,13 +22,13 @@ class TestNormPropExtractor(unittest.TestCase):
         user_query: str = """
         please tell me a dad joke.
         """
-        results: NormativeAnalysisResults = NormPropExtractor().do_extraction(
+        results: str = NormPropExtractor().do_extraction(
             user_query
         )
-        self.assertIsNotNone(results.implied_propositions.NormativeProposition)  # type: ignore
-        self.assertTrue(len(results.implied_propositions.NormativeProposition) <= 5)  # type: ignore
+        self.assertIsNotNone(results.implied_propositions.NormativePropositions)  # type: ignore
+        self.assertTrue(len(results.implied_propositions.NormativePropositions) <= 5)  # type: ignore
 
-    def test_extracted_normprops(self) -> None:
+    def test_extracted_norm_props(self) -> None:
         user_query: str = """
         please tell me a cat joke
         """

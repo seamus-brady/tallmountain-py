@@ -14,6 +14,7 @@ from dataclasses import (
 )
 from enum import Enum
 
+from src.tallmountain.exceptions.normative_exception import NormativeException
 from src.tallmountain.util.logging_util import LoggingUtil
 
 
@@ -108,21 +109,21 @@ class NormativeProposition:
 
     LOGGER = LoggingUtil.instance("<NormativeProposition>")
 
-    @classmethod
-    def from_dict(cls, data: dict) -> "NormativeProposition":
+    @staticmethod
+    def from_dict(np_data: dict) -> "NormativeProposition":
         try:
-            return cls(
-                uuid=data.get("uuid", str(uuid.uuid4())),
-                proposition_value=data.get("proposition_value", "Unknown"),
-                operator=Operator[data.get("operator", "INDIFFERENT")],
-                level=Level[data.get("level", "ETIQUETTE")],
-                modality=Modality[data.get("modality", "IMPOSSIBLE")],
+            return NormativeProposition(
+                uuid=np_data.get("uuid", str(uuid.uuid4())),
+                proposition_value=np_data.get("proposition_value", "Unknown"),
+                operator=Operator[np_data.get("operator", "INDIFFERENT")],
+                level=Level[np_data.get("level", "ETIQUETTE")],
+                modality=Modality[np_data.get("modality", "IMPOSSIBLE")],
                 modal_subscript=ModalitySubscript[
-                    data.get("modality-subscript", "NONE")
+                    np_data.get("modality-subscript", "NONE")
                 ],
             )
-        except KeyError as e:
-            raise ValueError(f"Invalid data for NormativeProposition: missing key {e}")
+        except Exception as e:
+            raise NormativeException(f"Error creating NormativeProposition - Invalid data at missing key {e}")
 
     def __str__(self) -> str:
         return (

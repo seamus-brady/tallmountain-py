@@ -18,7 +18,6 @@ from typing import (
     Union,
 )
 
-import litellm
 from instructor import Partial
 from pydantic import BaseModel
 

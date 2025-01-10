@@ -6,13 +6,15 @@
 #  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-from typing import List
+
+import concurrent.futures
 
 from pydantic import (
     BaseModel,
     Field,
 )
 
+from src.tallmountain.exceptions.normative_exception import NormativeException
 from src.tallmountain.llm.llm_facade import LLM
 from src.tallmountain.llm.llm_messages import LLMMessages
 from src.tallmountain.normative.analysis.np_extractor import NormPropExtractor
@@ -41,47 +43,59 @@ class UserTask(Endeavour):
 
     @staticmethod
     def get_from_query(user_query: str) -> "UserTask":
-        UserTask.LOGGER.info("Getting user task from user query")
+        try:
 
-        # extract norm props
-        extractor: NormPropExtractor = NormPropExtractor()
-        extracted_norm_props: List[NormativeProposition] = (
-            extractor.extract_normative_propositions(user_query)
-        )
+            UserTask.LOGGER.info("Getting user task from user query")
 
-        # extract goal and description
-        task_goal_description: TaskResponse = UserTask.get_goal_description(user_query)
+            def extract_norm_props():
+                extractor: NormPropExtractor = NormPropExtractor()
+                return extractor.extract_normative_propositions(user_query)
 
-        user_task = UserTask(
-            name=task_goal_description.name,
-            description=task_goal_description.description,
-            comprehensiveness=Comprehensiveness.DEFAULT,
-            normative_propositions=extracted_norm_props,
-        )
+            def extract_goal_description():
+                return UserTask.get_goal_description(user_query)
 
-        return user_task
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future_norm_props = executor.submit(extract_norm_props)
+                future_goal_description = executor.submit(extract_goal_description)
+
+                extracted_norm_props = future_norm_props.result()
+                task_goal_description = future_goal_description.result()
+
+            user_task = UserTask(
+                    name=task_goal_description.name,
+                    description=task_goal_description.description,
+                    comprehensiveness=Comprehensiveness.DEFAULT,
+                    normative_propositions=extracted_norm_props,
+            )
+
+            return user_task
+        except Exception as error:
+            raise NormativeException(str(error))
 
     @staticmethod
     def get_goal_description(statement: str) -> TaskResponse:
-        UserTask.LOGGER.info("Getting user task goal and description")
+        try:
+            UserTask.LOGGER.info("Getting user task goal and description")
 
-        llm: LLM = LLM()
-        llm_messages = LLMMessages()
-        prompt: str = f"""
-        
-        === INSTRUCTIONS ===
-        - Your job is to analyse the user's statement below and formulate a goal and description for the AI assistant task
-          to handle this user query.
-        - The name should be a short, descriptive name for the task.
-        - The goal should be a clear statement of what the user is trying to the AI assistant to do.
-        - The description should be a more detailed explanation of the task and the context in which it will be performed.
-        === START INPUT STATEMENT ===
-        {statement}
-        === END INPUT STATEMENT ===
-        
-        """
-        llm_messages = llm_messages.build(prompt, llm_messages.USER)
-        response: TaskResponse = llm.do_instructor(
-            messages=llm_messages.messages, response_model=TaskResponse
-        )
-        return response
+            llm: LLM = LLM()
+            llm_messages = LLMMessages()
+            prompt: str = f"""
+            
+            === INSTRUCTIONS ===
+            - Your job is to analyse the user's statement below and formulate a goal and description for the AI assistant task
+              to handle this user query.
+            - The name should be a short, descriptive name for the task.
+            - The goal should be a clear statement of what the user is trying to the AI assistant to do.
+            - The description should be a more detailed explanation of the task and the context in which it will be performed.
+            === START INPUT STATEMENT ===
+            {statement}
+            === END INPUT STATEMENT ===
+            
+            """
+            llm_messages = llm_messages.build(prompt, llm_messages.USER)
+            response: TaskResponse = llm.do_instructor(
+                messages=llm_messages.messages, response_model=TaskResponse
+            )
+            return response
+        except Exception as error:
+            raise NormativeException(str(error))

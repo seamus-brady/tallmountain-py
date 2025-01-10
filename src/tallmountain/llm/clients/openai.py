@@ -39,7 +39,7 @@ OPENI_API_KEY = os.environ["OPENAI_API_KEY"]
 class OpenAIClient(LLMClient):
     """An interface to the OpenAI API. Used only from within the LLM facade parent class."""
 
-    DEFAULT_MODEL = "gpt-4o-mini"
+    DEFAULT_MODEL = "gpt-4o"
 
     LOGGER = LoggingUtil.instance("<OpenAIClient>")
 
