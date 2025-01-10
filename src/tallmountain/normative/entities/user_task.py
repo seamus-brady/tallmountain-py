@@ -8,6 +8,7 @@
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import concurrent.futures
+from typing import List
 
 from pydantic import (
     BaseModel,
@@ -47,12 +48,15 @@ class UserTask(Endeavour):
 
             UserTask.LOGGER.info("Getting user task from user query")
 
-            def extract_norm_props():
+            # ---- start internal functions ----
+            def extract_norm_props() -> List[NormativeProposition]:
                 extractor: NormPropExtractor = NormPropExtractor()
                 return extractor.extract_normative_propositions(user_query)
 
-            def extract_goal_description():
+            def extract_goal_description() -> TaskResponse:
                 return UserTask.get_goal_description(user_query)
+
+            # ---- end internal functions ----
 
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 future_norm_props = executor.submit(extract_norm_props)
@@ -62,10 +66,10 @@ class UserTask(Endeavour):
                 task_goal_description = future_goal_description.result()
 
             user_task = UserTask(
-                    name=task_goal_description.name,
-                    description=task_goal_description.description,
-                    comprehensiveness=Comprehensiveness.DEFAULT,
-                    normative_propositions=extracted_norm_props,
+                name=task_goal_description.name,
+                description=task_goal_description.description,
+                comprehensiveness=Comprehensiveness.DEFAULT,
+                normative_propositions=extracted_norm_props,
             )
 
             return user_task

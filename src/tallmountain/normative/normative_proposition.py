@@ -123,7 +123,9 @@ class NormativeProposition:
                 ],
             )
         except Exception as e:
-            raise NormativeException(f"Error creating NormativeProposition - Invalid data at missing key {e}")
+            raise NormativeException(
+                f"Error creating NormativeProposition - Invalid data at missing key {e}"
+            )
 
     def __str__(self) -> str:
         return (

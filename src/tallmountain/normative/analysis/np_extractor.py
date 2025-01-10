@@ -46,29 +46,29 @@ class NormPropExtractor:
         "norm_prop_extractor", "max_extracted_norms"
     )
 
-    MAX_ATTEMPTS: int = ConfigUtil.get_int(
-        "norm_prop_extractor", "max_attempts"
-    )
+    MAX_ATTEMPTS: int = ConfigUtil.get_int("norm_prop_extractor", "max_attempts")
 
     LOGGER = LoggingUtil.instance("<NormPropExtractor>")
 
     def extract_normative_propositions(
-            self, user_query: str
+        self, user_query: str
     ) -> List[NormativeProposition]:
         self.LOGGER.info("Extracting normative propositions")
         results = self.do_extraction(user_query)
         if (
-                results.implied_propositions
-                and results.implied_propositions.NormativePropositions
+            results.implied_propositions
+            and results.implied_propositions.NormativePropositions
         ):
             return [
                 NormativeProposition.from_dict(np_data=np.model_dump())
                 for np in results.implied_propositions.NormativePropositions
             ]
-        raise NormativeException(f"Error extract_normative_proposition - no values returned")
+        raise NormativeException(
+            "Error extract_normative_proposition - no values returned"
+        )
 
     def do_extraction(self, user_query: str) -> NormativeAnalysisResults:
-        try
+        try:
             self.LOGGER.info("Performing extraction")
             llm: LLM = LLM()
             llm_messages = LLMMessages()
@@ -240,13 +240,15 @@ class NormPropExtractor:
             while response is None or response.implied_propositions is None:
                 attempt += 1
                 if attempt > self.MAX_ATTEMPTS:
-                    raise NormativeException("Error extracting normative propositions, too many attempts")
+                    raise NormativeException(
+                        "Error extracting normative propositions, too many attempts"
+                    )
                 self.LOGGER.info(f"Attempt {attempt} to extract normative propositions")
                 response = llm.do_instructor(
-                    messages=llm_messages.messages, response_model=NormativeAnalysisResults
+                    messages=llm_messages.messages,
+                    response_model=NormativeAnalysisResults,
                 )
 
             return response
         except Exception as error:
             raise NormativeException(str(error))
-
