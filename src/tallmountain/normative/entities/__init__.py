@@ -6,10 +6,3 @@
 #  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-from src.tallmountain.normative.endeavour import Endeavour
-
-
-class SystemTask(Endeavour):
-    # a class for handling system tasks
-
-    pass

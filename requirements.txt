@@ -11,6 +11,5 @@ mypy
 openai
 pydantic
 python-dotenv
-litellm
 uuid6
 shortuuid

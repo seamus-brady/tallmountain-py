@@ -36,6 +36,7 @@ class TestNormPropExtractor(unittest.TestCase):
             NormPropExtractor().extract_normative_propositions(user_query=user_query)
         )
         self.assertIsNotNone(results)
+        self.assertTrue(len(results) <= 5)  # type: ignore
 
 
 if __name__ == "__main__":

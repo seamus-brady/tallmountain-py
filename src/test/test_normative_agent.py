@@ -9,7 +9,7 @@
 
 import unittest
 
-from src.tallmountain.normative.endeavour import Endeavour
+from src.tallmountain.normative.entities.endeavour import Endeavour
 from src.tallmountain.normative.normative_agent import NormativeAgent
 from src.tallmountain.normative.normative_proposition import NormativeProposition
 
@@ -32,11 +32,17 @@ class TestNormativeAgent(unittest.TestCase):
             self.assertTrue(len(endeavour.normative_propositions) > 0)
             for proposition in endeavour.normative_propositions:
                 self.assertIsInstance(proposition, NormativeProposition)
+        self.assertIsNotNone(agent.highest_endeavour_to_md())
 
     def test_highest_endeavour_md(self):
         agent = NormativeAgent()
-        print(agent.highest_endeavour.to_markdown())
-        self.assertIsNotNone(agent.highest_endeavour.to_markdown())
+        print(agent.highest_endeavour_to_md())
+        self.assertIsNotNone(agent.highest_endeavour_to_md())
+
+    def test_system_endeavours_md(self):
+        agent = NormativeAgent()
+        print(agent.system_endeavours_to_md())
+        self.assertIsNotNone(agent.system_endeavours_to_md())
 
 
 if __name__ == "__main__":

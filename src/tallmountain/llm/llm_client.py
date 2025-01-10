@@ -18,25 +18,15 @@ from typing import (
     Union,
 )
 
-import instructor
 import litellm
 from instructor import Partial
-from litellm import completion as litellm_completion
 from pydantic import BaseModel
 
-from src.tallmountain.exceptions.llm_exception import LLMException
 from src.tallmountain.modes.adaptive_request_mode import AdaptiveRequestMode
 from src.tallmountain.util.logging_util import LoggingUtil
 
 # based on T in instructor.client.Instructor
 T = TypeVar("T", bound=Union[BaseModel, Iterable, Partial])
-
-# add tools use to the prompt for Non OpenAI LLMs
-# see https://litellm.vercel.app/docs/completion/function_call
-# litellm.add_function_to_prompt = True
-
-# no logging thanks
-litellm.telemetry = False
 
 
 class LLMClient:
@@ -62,21 +52,7 @@ class LLMClient:
         This patches the litellm completion object to allow the use of a response_model.
         Returns a full completion object.
         """
-        LLMClient.LOGGER.debug("Starting instructor completion...")
-        try:
-            patched_client = instructor.from_litellm(litellm_completion)
-            response = patched_client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                max_tokens=mode.max_tokens,
-                temperature=mode.temperature,
-                top_p=mode.top_p,
-                response_model=response_model,
-            )
-            return response
-        except Exception as error:
-            LLMClient.LOGGER.error(str(error))
-            raise LLMException(str(error))
+        raise NotImplementedError
 
     def do_tool(
         self,
@@ -88,21 +64,7 @@ class LLMClient:
         Base method for calling tool using completions.
         Returns a full completion object.
         """
-        LLMClient.LOGGER.debug("Starting tool completion...")
-        try:
-            response = litellm_completion(
-                model=self.model,
-                messages=messages,
-                max_tokens=mode.max_tokens,
-                temperature=mode.temperature,
-                top_p=mode.top_p,
-                tools=tools,
-                tool_choice="auto",
-            )
-            return response
-        except Exception as error:
-            LLMClient.LOGGER.error(str(error))
-            raise LLMException(str(error))
+        raise NotImplementedError
 
     def do_string(
         self,
@@ -113,13 +75,7 @@ class LLMClient:
         Base method for calling completions.
         Returns a string.
         """
-        LLMClient.LOGGER.debug("Starting string completion...")
-        try:
-            response: Any = self.do_completion(messages=messages, mode=mode)
-            return f"{response.choices[0].message.content}"
-        except Exception as error:
-            LLMClient.LOGGER.error(str(error))
-            raise LLMException(str(error))
+        raise NotImplementedError
 
     def do_completion(
         self,
@@ -130,16 +86,4 @@ class LLMClient:
         Base method for calling completions.
         Returns a full completion object.
         """
-        LLMClient.LOGGER.debug("Starting completion...")
-        try:
-            response = litellm_completion(
-                model=self.model,
-                messages=messages,
-                max_tokens=mode.max_tokens,
-                temperature=mode.temperature,
-                top_p=mode.top_p,
-            )
-            return response
-        except Exception as error:
-            LLMClient.LOGGER.error(str(error))
-            raise LLMException(str(error))
+        raise NotImplementedError

@@ -105,6 +105,7 @@ class NormativeProposition:
     level: Level = Level.ETIQUETTE
     modality: Modality = Modality.IMPOSSIBLE
     modal_subscript: ModalitySubscript = ModalitySubscript.NONE
+
     LOGGER = LoggingUtil.instance("<NormativeProposition>")
 
     @classmethod

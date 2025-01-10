@@ -13,29 +13,22 @@ from dataclasses import (
     dataclass,
     field,
 )
-from enum import Enum
 from typing import List
 
+from src.tallmountain.normative.entities.comprehensiveness import Comprehensiveness
 from src.tallmountain.normative.normative_proposition import NormativeProposition
+from src.tallmountain.util.logging_util import LoggingUtil
+from src.tallmountain.util.string_buffer_util import StringBuffer
 from src.tallmountain.util.uuid_util import UUIDUtil
-
-
-class Comprehensiveness(Enum):
-    """
-    Comprehensiveness Determines Escalation: When two endeavours conflict, and one is more comprehensive than the
-    other, the norms of the more comprehensive endeavour are elevated to a higher normative level.
-    """
-
-    HIGH = "HIGH"
-    DEFAULT = "DEFAULT"
-    LOW = "LOW"
 
 
 @dataclass
 class Endeavour:
     """
-    An endeavour of an agent. Manages a set of NormProps.
+    A base class for an entities of an agent. Manages a set of NormProps.
     """
+
+    LOGGER = LoggingUtil.instance("<UserTask>")
 
     name: str
     description: str
@@ -43,20 +36,20 @@ class Endeavour:
     comprehensiveness: Comprehensiveness = Comprehensiveness.DEFAULT
     normative_propositions: List[NormativeProposition] = field(default_factory=list)
 
-    @classmethod
+    @staticmethod
     def create(
-        cls,
         name: str,
         description: str,
         uuid: str = None,
-        comprehensiveness: str = None,
+        comprehensiveness=Comprehensiveness.DEFAULT,
         normative_propositions: List[NormativeProposition] = None,
     ):
-        return cls(
+        Endeavour.LOGGER.info(f"Creating Endeavour: {name}")
+        return Endeavour(
             name=name,
             description=description,
             uuid=uuid or str(UUIDUtil.get()),
-            comprehensiveness=Comprehensiveness.DEFAULT,
+            comprehensiveness=comprehensiveness,
             normative_propositions=normative_propositions or [],
         )
 
@@ -67,6 +60,7 @@ class Endeavour:
         return (
             f"----\n"
             f"Endeavour name: {self.name}\n"
+            f"Endeavour UUID: {self.uuid}\n"
             f"description: {self.description}\n"
             f"comprehensiveness: {self.comprehensiveness}\n"
             f"normative_propositions:\n{propositions_gist}\n"
@@ -74,7 +68,11 @@ class Endeavour:
         )
 
     def to_markdown(self) -> str:
+        sb: StringBuffer = StringBuffer()
+
         endeavour_heading = f"# Endeavour: {self.name or 'Unnamed Endeavour'}\n"
+        sb.append(endeavour_heading)
+
         endeavour_table = (
             "| **Property**         | **Value**                         |\n"
             "|-----------------------|-----------------------------------|\n"
@@ -83,28 +81,25 @@ class Endeavour:
             f"| UUID                 | {self.uuid or 'Unknown UUID'}                         |\n"
             f"| Comprehensiveness    | {self.comprehensiveness}            |\n"
         )
+        sb.append(endeavour_table)
 
         propositions_heading = f"## Normative Propositions for Endeavour: {self.name or 'Unnamed Endeavour'}\n"
+        sb.append(propositions_heading)
+
         propositions_table = (
-            "| **Proposition** | **Operator** | **Level** | **Modality** | **Modal Subscript** |\n"
-            "|------------------|--------------|-----------|--------------|--------------------|\n"
+            "| **UUID** | **Proposition** | **Operator** | **Level** | **Modality** | **Modal Subscript** |\n"
+            "|----------|------------------|--------------|-----------|--------------|--------------------|\n"
         )
+        sb.append(propositions_table)
 
         for np in self.normative_propositions:
-            propositions_table += (
-                f"| {np.proposition_value or ''} "
-                f"| {np.operator or ''} "
-                f"| {np.level or ''} "
-                f"| {np.modality or ''} "
-                f"| {np.modal_subscript or ''} |\n"
+            sb.append(
+                f"| {np.uuid or 'Unknown'} "
+                f"| {np.proposition_value or 'Unknown'} "
+                f"| {np.operator or 'Unknown'} "
+                f"| {np.level or 'Unknown'} "
+                f"| {np.modality or 'Unknown'} "
+                f"| {np.modal_subscript or 'Unknown'} |\n"
             )
 
-        return (
-            endeavour_heading
-            + "\n"
-            + endeavour_table
-            + "\n\n"
-            + propositions_heading
-            + "\n"
-            + propositions_table
-        )
+        return sb.__str__()

@@ -7,10 +7,11 @@
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from src.tallmountain.normative.endeavour import Endeavour
+
+from src.tallmountain.normative.entities.endeavour import Endeavour
 
 
-class UserTask(Endeavour):
-    # a class for handling user tasks
+class SystemTask(Endeavour):
+    """a class for handling system tasks"""
 
     pass

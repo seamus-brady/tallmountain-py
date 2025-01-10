@@ -9,10 +9,24 @@
 
 #
 import os
+from typing import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Type,
+)
 
+import instructor
 from dotenv import load_dotenv
+from openai import OpenAI
 
-from src.tallmountain.llm.llm_client import LLMClient
+from src.tallmountain.exceptions.llm_exception import LLMException
+from src.tallmountain.llm.llm_client import (
+    LLMClient,
+    T,
+)
+from src.tallmountain.modes.adaptive_request_mode import AdaptiveRequestMode
 from src.tallmountain.util.logging_util import LoggingUtil
 
 # take environment variables from .env.
@@ -33,3 +47,97 @@ class OpenAIClient(LLMClient):
         super().__init__()
         OpenAIClient.LOGGER.info("Initializing OpenAIClient...")
         self._model = self.DEFAULT_MODEL
+        self.client = OpenAI(api_key=OPENI_API_KEY)
+
+    def do_instructor(
+        self,
+        messages: List[Dict[str, str]],
+        response_model: Type[T],
+        mode: AdaptiveRequestMode,
+    ) -> Any:
+        """
+        Method for calling Instructor completions.
+        This patches the completion object to allow the use of a response_model.
+        Returns a full completion object.
+        """
+        LLMClient.LOGGER.debug("Starting instructor completion...")
+        try:
+            patched_client = instructor.from_openai(OpenAI())
+            response = patched_client.chat.completions.create(
+                model=self.model,
+                messages=messages,  # type: ignore
+                max_tokens=mode.max_tokens,
+                temperature=mode.temperature,
+                top_p=mode.top_p,
+                response_model=response_model,
+            )
+            return response
+        except Exception as error:
+            LLMClient.LOGGER.error(str(error))
+            raise LLMException(str(error))
+
+    def do_tool(
+        self,
+        messages: List[Dict[str, str]],
+        tools: Optional[List],
+        mode: AdaptiveRequestMode,
+    ) -> Any:
+        """
+        Method for calling tool using completions.
+        Returns a full completion object.
+        """
+        LLMClient.LOGGER.debug("Starting tool completion...")
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,  # type: ignore
+                max_tokens=mode.max_tokens,
+                temperature=mode.temperature,
+                top_p=mode.top_p,
+                tools=tools,
+                tool_choice="auto",
+            )
+            return response
+        except Exception as error:
+            LLMClient.LOGGER.error(str(error))
+            raise LLMException(str(error))
+
+    def do_string(
+        self,
+        messages: List[Dict[str, str]],
+        mode: AdaptiveRequestMode,
+    ) -> str:
+        """
+        Base method for calling completions.
+        Returns a string.
+        """
+        LLMClient.LOGGER.debug("Starting string completion...")
+        try:
+            response: Any = self.do_completion(messages=messages, mode=mode)
+            return f"{response.choices[0].message.content}"
+        except Exception as error:
+            LLMClient.LOGGER.error(str(error))
+            raise LLMException(str(error))
+
+    def do_completion(
+        self,
+        messages: List[Dict[str, str]],
+        mode: AdaptiveRequestMode,
+    ) -> Any:
+        """
+        Base method for calling completions.
+        Returns a full completion object.
+        """
+        LLMClient.LOGGER.debug("Starting completion...")
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,  # type: ignore
+                max_tokens=mode.max_tokens,
+                temperature=mode.temperature,
+                top_p=mode.top_p,
+            )
+            return response
+        except Exception as error:
+            LLMClient.LOGGER.error(str(error))
+            raise LLMException(str(error))
