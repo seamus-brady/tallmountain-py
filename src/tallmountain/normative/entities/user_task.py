@@ -74,6 +74,7 @@ class UserTask(Endeavour):
 
             return user_task
         except Exception as error:
+            UserTask.LOGGER.error(str(error))
             raise NormativeException(str(error))
 
     @staticmethod
@@ -102,4 +103,5 @@ class UserTask(Endeavour):
             )
             return response
         except Exception as error:
+            UserTask.LOGGER.error(str(error))
             raise NormativeException(str(error))

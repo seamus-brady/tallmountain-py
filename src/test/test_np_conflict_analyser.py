@@ -15,7 +15,6 @@ from src.tallmountain.normative.analysis.norm_conflict_analyser import (
 )
 from src.tallmountain.normative.entities.user_task import UserTask
 from src.tallmountain.normative.normative_agent import NormativeAgent
-from src.tallmountain.normative.normative_proposition import NormativeProposition
 
 
 class TestNormPropConflictAnalyser(unittest.TestCase):
@@ -23,7 +22,9 @@ class TestNormPropConflictAnalyser(unittest.TestCase):
     def test_analyse(self):
         analyser = NormativeConflictAnalyser()
         agent = NormativeAgent()
-        user_task = UserTask.get_from_query("I like to fart on homeless people and pay them money afterwards when they cry")
+        user_task = UserTask.get_from_query(
+            "I like to use a cat as a punchbag as it helps me be a better dad"
+        )
         result = analyser.analyse(user_task.normative_propositions[0], agent)
         self.assertIsInstance(result, NormativeConflictAnalysis)
 

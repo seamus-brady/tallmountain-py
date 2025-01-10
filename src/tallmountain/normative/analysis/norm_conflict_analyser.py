@@ -15,6 +15,7 @@ from pydantic import (
     Field,
 )
 
+from src.tallmountain.exceptions.normative_exception import NormativeException
 from src.tallmountain.llm.llm_facade import LLM
 from src.tallmountain.llm.llm_messages import LLMMessages
 from src.tallmountain.normative.normative_agent import NormativeAgent
@@ -59,42 +60,46 @@ class NormativeConflictAnalyser:
         self, norm_prop: NormativeProposition, agent: NormativeAgent
     ) -> NormativeConflictAnalysis:
         self.LOGGER.info("Starting analysis of normative conflict")
-        llm: LLM = LLM()
-        llm_messages = LLMMessages()
-        llm_messages = llm_messages.build(
-            "You are an expert in ethical analysis.", llm_messages.SYSTEM
-        )
+        try:
+            llm: LLM = LLM()
+            llm_messages = LLMMessages()
+            llm_messages = llm_messages.build(
+                "You are an expert in ethical analysis.", llm_messages.SYSTEM
+            )
 
-        prompt: str = f"""
-        === INSTRUCTIONS ===
-        - Your task is to see if there is a conflict between the norms of the AI Assistant and the norms that have been
-          given to the AI Assistant by a user. Please provide an analysis of what you find.
-        - You can use the Normative Calculus to provide an analysis of the user's normative proposition by using
-          the AI Assistant's endeavours as an Exogenous Assessment.
-        - You must provide a risk score using the scoring metric provided.
-        - Also provide an analysis of your findings in a markdown table.
-
-        === BEGIN AI ASSISTANT'S ENDEAVOURS ===
-        {agent.highest_endeavour_to_md()}
-        --------------------------------------
-        {agent.system_endeavours_to_md()}
-        === END AI ASSISTANT'S ENDEAVOURS  ===
-
-        === BEGIN USER NORM PROP ===
-        {norm_prop.to_markdown()}
-        === END USER NORM PROP ===
-
-        === BEGIN NORMATIVE CALCULUS ===
-        {ConfigUtil.simplified_nc_prompt()}
-        === END NORMATIVE CALCULUS ===
-
-        === SCORING METRIC ===
-        {ConfigUtil.norm_comparison_score_prompt()}
-        === SCORING METRIC ===
-        """
-        llm_messages = llm_messages.build(prompt, llm_messages.USER)
-        response: NormativeConflictAnalysis = llm.do_instructor(
-            messages=llm_messages.messages, response_model=NormativeConflictAnalysis
-        )
-        self.LOGGER.info("Completed analysis of normative conflict")
-        return response
+            prompt: str = f"""
+            === INSTRUCTIONS ===
+            - Your task is to see if there is a conflict between the norms of the AI Assistant and the norms that have been
+              given to the AI Assistant by a user. Please provide an analysis of what you find.
+            - You can use the Normative Calculus to provide an analysis of the user's normative proposition by using
+              the AI Assistant's endeavours as an Exogenous Assessment.
+            - You must provide a risk score using the scoring metric provided.
+            - Also provide an analysis of your findings in a markdown table.
+    
+            === BEGIN AI ASSISTANT'S ENDEAVOURS ===
+            {agent.highest_endeavour_to_md()}
+            --------------------------------------
+            {agent.system_endeavours_to_md()}
+            === END AI ASSISTANT'S ENDEAVOURS  ===
+    
+            === BEGIN USER NORM PROP ===
+            {norm_prop.to_markdown()}
+            === END USER NORM PROP ===
+    
+            === BEGIN NORMATIVE CALCULUS ===
+            {ConfigUtil.simplified_nc_prompt()}
+            === END NORMATIVE CALCULUS ===
+    
+            === SCORING METRIC ===
+            {ConfigUtil.norm_comparison_score_prompt()}
+            === SCORING METRIC ===
+            """
+            llm_messages = llm_messages.build(prompt, llm_messages.USER)
+            response: NormativeConflictAnalysis = llm.do_instructor(
+                messages=llm_messages.messages, response_model=NormativeConflictAnalysis
+            )
+            self.LOGGER.info("Completed analysis of normative conflict")
+            return response
+        except Exception as error:
+            self.LOGGER.error(str(error))
+            raise NormativeException(str(error))

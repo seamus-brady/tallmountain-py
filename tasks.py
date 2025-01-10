@@ -77,5 +77,10 @@ def chat_ui(c):
 @task
 def appserver(c):
     print("Running chat server...")
-    c.run("python src/tallmountain/appserver.py")
+    c.run("python src/tallmountain/app_server.py")
+
+@task
+def repl(c):
+    print("Running repl...")
+    c.run("python src/tallmountain/app_repl.py")
 

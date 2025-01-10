@@ -251,4 +251,5 @@ class NormPropExtractor:
 
             return response
         except Exception as error:
+            self.LOGGER.error(str(error))
             raise NormativeException(str(error))
