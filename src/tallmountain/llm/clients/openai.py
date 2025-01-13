@@ -26,6 +26,7 @@ from src.tallmountain.llm.llm_client import (
     LLMClient,
     T,
 )
+from src.tallmountain.llm.xstructor import XStructor
 from src.tallmountain.modes.adaptive_request_mode import AdaptiveRequestMode
 from src.tallmountain.util.logging_util import LoggingUtil
 
@@ -49,16 +50,33 @@ class OpenAIClient(LLMClient):
         self._model = self.DEFAULT_MODEL
         self.client = OpenAI(api_key=OPENI_API_KEY)
 
+    def do_xstructor(
+            self,
+            messages: List[Dict[str, str]],
+            xml_example: str,
+            xml_schema: str,
+            mode: AdaptiveRequestMode,
+    ) -> Any:
+        """
+        Base method for calling XStructor xml schema based completions.
+        Used for more complex tasks where Instructor is not enough.
+        """
+        xstructor = XStructor(llm_client=self)
+        response = xstructor.do_xstructor_completion(
+            messages,
+            xml_example,
+            xml_schema,
+            mode=mode)
+        return response
+
     def do_instructor(
-        self,
-        messages: List[Dict[str, str]],
-        response_model: Type[T],
-        mode: AdaptiveRequestMode,
+            self,
+            messages: List[Dict[str, str]],
+            response_model: Type[T],
+            mode: AdaptiveRequestMode,
     ) -> Any:
         """
         Method for calling Instructor completions.
-        This patches the completion object to allow the use of a response_model.
-        Returns a full completion object.
         """
         LLMClient.LOGGER.debug("Starting instructor completion...")
         try:
@@ -77,14 +95,13 @@ class OpenAIClient(LLMClient):
             raise LLMException(str(error))
 
     def do_tool(
-        self,
-        messages: List[Dict[str, str]],
-        tools: Optional[List],
-        mode: AdaptiveRequestMode,
+            self,
+            messages: List[Dict[str, str]],
+            tools: Optional[List],
+            mode: AdaptiveRequestMode,
     ) -> Any:
         """
         Method for calling tool using completions.
-        Returns a full completion object.
         """
         LLMClient.LOGGER.debug("Starting tool completion...")
         try:
@@ -103,9 +120,9 @@ class OpenAIClient(LLMClient):
             raise LLMException(str(error))
 
     def do_string(
-        self,
-        messages: List[Dict[str, str]],
-        mode: AdaptiveRequestMode,
+            self,
+            messages: List[Dict[str, str]],
+            mode: AdaptiveRequestMode,
     ) -> str:
         """
         Base method for calling completions.
@@ -120,9 +137,9 @@ class OpenAIClient(LLMClient):
             raise LLMException(str(error))
 
     def do_completion(
-        self,
-        messages: List[Dict[str, str]],
-        mode: AdaptiveRequestMode,
+            self,
+            messages: List[Dict[str, str]],
+            mode: AdaptiveRequestMode,
     ) -> Any:
         """
         Base method for calling completions.

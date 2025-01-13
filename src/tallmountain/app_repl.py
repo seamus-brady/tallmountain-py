@@ -26,7 +26,7 @@ from src.tallmountain.normative.analysis.impact_assessment import (  # noqa: E40
     ImpactAssessment,
 )
 from src.tallmountain.normative.analysis.np_extractor import (  # noqa: E402
-    NormPropExtractor,
+    NormPropExtractor, NormativeAnalysisResults,
 )
 from src.tallmountain.normative.analysis.self_diagnostic import (  # noqa: E402
     NormativeSelfDiagnostic,
@@ -58,15 +58,8 @@ def perform_self_diagnosis():
         APP_LOGGER.debug("Normative calculus self-diagnostic passed successfully!")
 
 
-def printf_implied_propositions(result):
-    print("implied_propositions:")
-    for prop in result["implied_propositions"]:
-        print(f"    - level: {prop['level']}")
-        print(f"      modal_subscript: {prop['modal_subscript']}")
-        print(f"      modality: {prop['modality']}")
-        print(f"      operator: {prop['operator']}")
-        print(f"      proposition_value: {prop['proposition_value']}\n")
-    print(f"input_statement:\n    {result['input_statement']}")
+def printf_implied_propositions(result: NormativeAnalysisResults):
+    print(f"input_statement:\n    {result.input_statement}")
 
 
 def printf_uis(result):
@@ -128,9 +121,9 @@ def main():
             if line.startswith(":np"):
                 query = line[4:].strip()
                 norm_extractor = NormPropExtractor()
-                norm_props = norm_extractor.do_extraction(query)
+                norm_props = norm_extractor.do_xml_extraction(query)
                 print(norm_props)
-                printf_implied_propositions(norm_props.model_dump())
+                printf_implied_propositions(norm_props)
                 continue
 
             if line.startswith(":uis"):

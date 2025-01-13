@@ -48,8 +48,19 @@ class LLMClient:
     ) -> Any:
         """
         Base method for calling Instructor completions.
-        This patches the litellm completion object to allow the use of a response_model.
-        Returns a full completion object.
+        """
+        raise NotImplementedError
+
+    def do_xstructor(
+        self,
+        messages: List[Dict[str, str]],
+        xml_example: str,
+        xml_schema: str,
+        mode: AdaptiveRequestMode,
+    ) -> Any:
+        """
+        Base method for calling XStructor xml schema based completions.
+        Used for more complex tasks where Instructor is not enough.
         """
         raise NotImplementedError
 

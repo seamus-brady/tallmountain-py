@@ -7,10 +7,9 @@
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import re
-from typing import List, Dict
+from typing import List, Dict, Any
 
 from src.tallmountain.exceptions.llm_exception import LLMException
-from src.tallmountain.llm.llm_facade import LLM
 from src.tallmountain.llm.llm_messages import LLMMessages
 from src.tallmountain.modes.adaptive_request_mode import AdaptiveRequestMode
 from src.tallmountain.util.logging_util import LoggingUtil
@@ -21,6 +20,9 @@ class XStructor:
     """Returns xml structured data from an LLM"""
 
     LOGGER = LoggingUtil.instance("<XStructor>")
+
+    def __init__(self, llm_client: Any) -> None:
+        self.llm_client = llm_client
 
     def do_xstructor_completion(self,
                                 messages: List[Dict[str, str]],
@@ -43,13 +45,13 @@ class XStructor:
                 messages=messages,
                 xml_schema=xml_schema,
                 xml_example=xml_example)
-            llm: LLM = LLM()
             llm_messages = LLMMessages()
             llm_messages = llm_messages.build(
                 "You are an expert in xml data extraction.", llm_messages.SYSTEM
             )
             llm_messages = llm_messages.build(prompt, llm_messages.USER)
-            xml_response: str = llm.do_string_completion(messages=llm_messages.messages, mode=mode)
+            # use the passed in client to do the completion
+            xml_response: str = self.llm_client.do_string(messages=llm_messages.messages, mode=mode)
             cleaned_xml_response = self.remove_code_block_markers(xml_response)
             cleaned_xml_response = self.strip_xml_declaration(cleaned_xml_response)
             if self.is_valid_xml(xml_string=cleaned_xml_response, xml_schema=xml_schema):
