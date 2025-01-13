@@ -13,3 +13,4 @@ pydantic
 python-dotenv
 uuid6
 shortuuid
+xmltodict

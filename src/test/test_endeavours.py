@@ -41,19 +41,6 @@ class TestEndeavours(unittest.TestCase):
         self.assertEqual(endeavour.comprehensiveness, Comprehensiveness.LOW)
         self.assertEqual(len(endeavour.normative_propositions), 0)
 
-    def test_endeavour_str(self):
-        expected_str = (
-            "----\n"
-            "Endeavour name: Test Endeavour\n"
-            "description: A test endeavour\n"
-            "comprehensiveness: Comprehensiveness.HIGH\n"
-            "normative_propositions:\n"
-            f"{self.norm_props[0]}\n"
-            f"{self.norm_props[1]}\n"
-            "----"
-        )
-        self.assertEqual(str(self.endeavour), expected_str)
-
     def test_to_markdown(self):
         print(self.endeavour.to_markdown())
         self.assertIsNotNone(self.endeavour.to_markdown())

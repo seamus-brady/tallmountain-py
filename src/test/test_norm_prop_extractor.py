@@ -22,7 +22,7 @@ class TestNormPropExtractor(unittest.TestCase):
         user_query: str = """
         please tell me a dad joke.
         """
-        results: NormativeAnalysisResults = NormPropExtractor().do_extraction(
+        results: NormativeAnalysisResults = NormPropExtractor().do_xml_extraction(
             user_query
         )
         self.assertIsNotNone(results.implied_propositions.NormativePropositions)  # type: ignore
@@ -37,6 +37,13 @@ class TestNormPropExtractor(unittest.TestCase):
         )
         self.assertIsNotNone(results)
         self.assertTrue(len(results) <= 5)  # type: ignore
+
+    def test_extracted_xml_norm_props(self) -> None:
+        user_query: str = """
+        please tell me a cat joke
+        """
+        results = NormPropExtractor().do_xml_extraction(user_query=user_query)
+        self.assertIsNotNone(results)
 
 
 if __name__ == "__main__":
