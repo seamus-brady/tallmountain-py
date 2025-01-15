@@ -82,5 +82,5 @@ def appserver(c):
 @task
 def repl(c):
     print("Running repl...")
-    c.run("python src/tallmountain/app_repl.py")
+    c.run("rlwrap python src/tallmountain/app_repl.py")
 

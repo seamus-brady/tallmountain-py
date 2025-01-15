@@ -18,7 +18,6 @@ from pydantic import BaseModel
 from src.tallmountain.exceptions.normative_exception import NormativeException
 from src.tallmountain.llm.llm_facade import LLM
 from src.tallmountain.llm.llm_messages import LLMMessages
-from src.tallmountain.llm.xstructor import XStructor
 from src.tallmountain.normative.normative_proposition import NormativeProposition
 from src.tallmountain.util.config_util import ConfigUtil
 from src.tallmountain.util.logging_util import LoggingUtil
@@ -126,7 +125,6 @@ class NormPropExtractor:
     def do_xml_extraction(self, user_query: str) -> NormativeAnalysisResults:
         try:
             self.LOGGER.info("Performing extraction")
-            llm: LLM = LLM()
             llm_messages = LLMMessages()
             llm_messages = llm_messages.build(
                 "You are an expert in language analysis.", llm_messages.SYSTEM
@@ -294,7 +292,8 @@ class NormPropExtractor:
             xml_response = LLM().do_xstructor(
                 llm_messages.messages,
                 self.np_extraction_example.strip(),
-                self.np_extraction_schema.strip())
+                self.np_extraction_schema.strip(),
+            )
             parsed = xmltodict.parse(xml_response)
             return self.map_to_pydantic(parsed)
         except Exception as error:
@@ -302,20 +301,25 @@ class NormPropExtractor:
             raise NormativeException(str(error))
 
     def map_to_pydantic(self, xml_data) -> NormativeAnalysisResults:
-        implied_props = xml_data['NormativeAnalysisResult'].get('implied_propositions', {})
-        return NormativeAnalysisResults(
-            input_statement=xml_data['NormativeAnalysisResult']['input_statement'],
-            implied_propositions=ImpliedPropositions(
-                NormativePropositions=[
-                    NormativePropositionType(
-                        proposition_value=p['proposition-value'],
-                        operator=p['operator'],
-                        level=p['level'],
-                        modality=p['modality'],
-                        modal_subscript=p['modal_subscript']
-                    )
-                    for p in implied_props.get('NormativeProposition', [])
-                ]
-            ) if 'NormativeProposition' in implied_props else None
+        implied_props = xml_data["NormativeAnalysisResult"].get(
+            "implied_propositions", {}
         )
-
+        return NormativeAnalysisResults(
+            input_statement=xml_data["NormativeAnalysisResult"]["input_statement"],
+            implied_propositions=(
+                ImpliedPropositions(
+                    NormativePropositions=[
+                        NormativePropositionType(
+                            proposition_value=p["proposition-value"],
+                            operator=p["operator"],
+                            level=p["level"],
+                            modality=p["modality"],
+                            modal_subscript=p["modal_subscript"],
+                        )
+                        for p in implied_props.get("NormativeProposition", [])
+                    ]
+                )
+                if "NormativeProposition" in implied_props
+                else None
+            ),
+        )

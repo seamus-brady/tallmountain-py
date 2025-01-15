@@ -19,7 +19,7 @@ class TestUserIntent(unittest.TestCase):
 
     def test_run_diagnostic_test(self):
         user_query = "I would like to know how to make a cake"
-        user_intent_analysis = UserIntent().run_diagnostic_test(user_task=user_query)
+        user_intent_analysis = UserIntent().analyse(user_task=user_query)
         self.assertIsInstance(user_intent_analysis, UserIntentAnalysis)
         self.assertIsInstance(user_intent_analysis.UserIntentScore, int)
         self.assertIsInstance(user_intent_analysis.Analysis, str)

@@ -44,7 +44,7 @@ class UserIntent:
     def __init__(self) -> None:
         pass
 
-    def run_diagnostic_test(self, user_task: str) -> UserIntentAnalysis:
+    def analyse(self, user_task: str) -> UserIntentAnalysis:
         """
         Run the diagnostic tests on the agent's norms
         """

@@ -12,6 +12,14 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
+from types import ModuleType
+from typing import Optional
+
+readline: Optional[ModuleType]
+try:
+    import readline
+except ImportError:
+    readline = None
 
 # path fix for imports ----------------------------------------------
 path = Path(os.path.dirname(os.path.realpath(__file__)))
@@ -23,15 +31,16 @@ sys.path.append(path.parent.parent.parent.absolute().__str__())
 # path fix for imports ----------------------------------------------
 
 from src.tallmountain.normative.analysis.impact_assessment import (  # noqa: E402
-    ImpactAssessment,
+    ImpactAssessment, ImpactAssessmentResult,
 )
 from src.tallmountain.normative.analysis.np_extractor import (  # noqa: E402
-    NormPropExtractor, NormativeAnalysisResults,
+    NormativeAnalysisResults,
+    NormPropExtractor,
 )
 from src.tallmountain.normative.analysis.self_diagnostic import (  # noqa: E402
     NormativeSelfDiagnostic,
 )
-from src.tallmountain.normative.analysis.user_intent import UserIntent  # noqa: E402
+from src.tallmountain.normative.analysis.user_intent import UserIntent, UserIntentAnalysis  # noqa: E402
 from src.tallmountain.util.config_util import ConfigUtil  # noqa: E402
 
 # Set up logger
@@ -59,19 +68,26 @@ def perform_self_diagnosis():
 
 
 def printf_implied_propositions(result: NormativeAnalysisResults):
-    print(f"input_statement:\n    {result.input_statement}")
+    print("Implied Normative Propositions:")
+    for prop in result.implied_propositions.NormativePropositions:
+        print(f"    - level: {prop.level}")
+        print(f"      modal_subscript: {prop.modal_subscript}")
+        print(f"      modality: {prop.modality}")
+        print(f"      operator: {prop.operator}")
+        print(f"      proposition_value: {prop.proposition_value}\n")
+    print(f"User Query Provided:\n    {result.input_statement}")
 
 
-def printf_uis(result):
+def printf_uis(result: UserIntentAnalysis):
     print("User Intent Score:")
-    print(f"Score:\n  {result['UserIntentScore']}")
-    print(f"Analysis:\n  {result['Analysis']}")
+    print(f"Score:\n  {result.UserIntentScore}")
+    print(f"Analysis:\n  {result.Analysis}")
 
 
-def printf_ias(result):
+def printf_ias(result: ImpactAssessmentResult):
     print("Impact Assessment Score:")
-    print(f"Score:\n  {result['ImpactAssessmentScore']}")
-    print(f"Analysis:\n  {result['Analysis']}")
+    print(f"Score:\n  {result.ImpactAssessmentScore}")
+    print(f"Analysis:\n  {result.Analysis}")
 
 
 def printf_nrp(risk_profile):
@@ -129,15 +145,15 @@ def main():
             if line.startswith(":uis"):
                 query = line[5:].strip()
                 uis_analysis = UserIntent()
-                uis = uis_analysis.analyse(query)
-                printf_uis(uis.dict())
+                uis: UserIntentAnalysis = uis_analysis.analyse(query)
+                printf_uis(uis)
                 continue
 
             if line.startswith(":ias"):
                 query = line[5:].strip()
                 ias_analysis = ImpactAssessment()
-                ias = ias_analysis.analyse(query)
-                printf_ias(ias.dict())
+                ias: ImpactAssessmentResult = ias_analysis.analyse(query)
+                printf_ias(ias)
                 continue
 
             if line.startswith(":nrp"):

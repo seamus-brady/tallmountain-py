@@ -9,6 +9,7 @@
 
 import unittest
 
+from src.tallmountain.llm.llm_client_factory import LLMClientFactory
 from src.tallmountain.llm.llm_messages import LLMMessages
 from src.tallmountain.llm.xstructor import XStructor
 
@@ -79,29 +80,31 @@ not_xml_str = """
 
 class TextXStructor(unittest.TestCase):
     def test_is_valid_xml(self):
-        xstructor = XStructor()
+        xstructor = XStructor(LLMClientFactory.llm_client())
         self.assertTrue(xstructor.is_valid_xml(xml_example_str, xml_schema_str))
 
     def test_is_invalid_xml(self):
-        xstructor = XStructor()
-        self.assertFalse(xstructor.is_valid_xml(xml_invalid_example_str, xml_schema_str))
+        xstructor = XStructor(LLMClientFactory.llm_client())
+        self.assertFalse(
+            xstructor.is_valid_xml(xml_invalid_example_str, xml_schema_str)
+        )
 
     def test_is_not_xml(self):
-        xstructor = XStructor()
+        xstructor = XStructor(LLMClientFactory.llm_client())
         self.assertFalse(xstructor.is_valid_xml(not_xml_str, xml_schema_str))
 
     def test_xstructor_completion(self):
-        xstructor = XStructor()
+        xstructor = XStructor(LLMClientFactory.llm_client())
         llm_messages = LLMMessages()
         llm_messages = llm_messages.build(
             "Mary has two children, Tom and Laura, 10 and 2 respectively.",
-            llm_messages.USER)
+            llm_messages.USER,
+        )
         response = xstructor.do_xstructor_completion(
-            llm_messages.messages,
-            xml_example_str,
-            xml_schema_str)
+            llm_messages.messages, xml_example_str, xml_schema_str
+        )
         self.assertIsNotNone(response)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

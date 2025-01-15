@@ -48,10 +48,10 @@ class LLM:
         return self._wrapped_llm_client
 
     def do_tool(
-            self,
-            messages: List[Dict[str, str]],
-            tools: Optional[List],
-            mode: AdaptiveRequestMode = AdaptiveRequestMode.instance(),
+        self,
+        messages: List[Dict[str, str]],
+        tools: Optional[List],
+        mode: AdaptiveRequestMode = AdaptiveRequestMode.instance(),
     ) -> Any:
         """Not in use as it tends to cause more hallucinations that the Ontal home-grown tool support."""
         try:
@@ -69,15 +69,18 @@ class LLM:
                 raise LLMException(str(error))
 
     def do_xstructor(
-            self,
-            messages: List[Dict[str, str]],
-            xml_example: str,
-            xml_schema: str,
-            mode: AdaptiveRequestMode = AdaptiveRequestMode.instance(),
+        self,
+        messages: List[Dict[str, str]],
+        xml_example: str,
+        xml_schema: str,
+        mode: AdaptiveRequestMode = AdaptiveRequestMode.instance(),
     ) -> Any:
         try:
             completion: Any = self.wrapped_llm_client.do_xstructor(
-                messages=messages, xml_example=xml_example, xml_schema=xml_schema, mode=mode
+                messages=messages,
+                xml_example=xml_example,
+                xml_schema=xml_schema,
+                mode=mode,
             )
             return completion
         except Exception as error:
@@ -90,10 +93,10 @@ class LLM:
                 raise LLMException(str(error))
 
     def do_instructor(
-            self,
-            messages: List[Dict[str, str]],
-            response_model: Type[T],
-            mode: AdaptiveRequestMode = AdaptiveRequestMode.instance(),
+        self,
+        messages: List[Dict[str, str]],
+        response_model: Type[T],
+        mode: AdaptiveRequestMode = AdaptiveRequestMode.instance(),
     ) -> Any:
         try:
             completion: Any = self.wrapped_llm_client.do_instructor(
@@ -110,9 +113,9 @@ class LLM:
                 raise LLMException(str(error))
 
     def do_completion(
-            self,
-            messages: List[Dict[str, str]],
-            mode: AdaptiveRequestMode = AdaptiveRequestMode.instance(),
+        self,
+        messages: List[Dict[str, str]],
+        mode: AdaptiveRequestMode = AdaptiveRequestMode.instance(),
     ) -> Any:
         try:
             completion: str = self.wrapped_llm_client.do_completion(
@@ -129,9 +132,9 @@ class LLM:
                 raise LLMException(str(error))
 
     def do_string_completion(
-            self,
-            messages: List[Dict[str, str]],
-            mode: AdaptiveRequestMode = AdaptiveRequestMode.instance(),
+        self,
+        messages: List[Dict[str, str]],
+        mode: AdaptiveRequestMode = AdaptiveRequestMode.instance(),
     ) -> str:
         try:
             completion: str = self.wrapped_llm_client.do_string(
@@ -149,7 +152,7 @@ class LLM:
 
     def is_bad_request(self, error):
         return error.args is not None and (
-                str(error.args[0]).__contains__("Error code: 400")
-                or (str(error.args[0]).__contains__("The response was filtered"))
-                or str(error.args[0]).__contains__("input_value='content_filter'")
+            str(error.args[0]).__contains__("Error code: 400")
+            or (str(error.args[0]).__contains__("The response was filtered"))
+            or str(error.args[0]).__contains__("input_value='content_filter'")
         )

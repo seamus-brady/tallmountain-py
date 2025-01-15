@@ -51,11 +51,11 @@ class OpenAIClient(LLMClient):
         self.client = OpenAI(api_key=OPENI_API_KEY)
 
     def do_xstructor(
-            self,
-            messages: List[Dict[str, str]],
-            xml_example: str,
-            xml_schema: str,
-            mode: AdaptiveRequestMode,
+        self,
+        messages: List[Dict[str, str]],
+        xml_example: str,
+        xml_schema: str,
+        mode: AdaptiveRequestMode,
     ) -> Any:
         """
         Base method for calling XStructor xml schema based completions.
@@ -63,17 +63,15 @@ class OpenAIClient(LLMClient):
         """
         xstructor = XStructor(llm_client=self)
         response = xstructor.do_xstructor_completion(
-            messages,
-            xml_example,
-            xml_schema,
-            mode=mode)
+            messages, xml_example, xml_schema, mode=mode
+        )
         return response
 
     def do_instructor(
-            self,
-            messages: List[Dict[str, str]],
-            response_model: Type[T],
-            mode: AdaptiveRequestMode,
+        self,
+        messages: List[Dict[str, str]],
+        response_model: Type[T],
+        mode: AdaptiveRequestMode,
     ) -> Any:
         """
         Method for calling Instructor completions.
@@ -95,10 +93,10 @@ class OpenAIClient(LLMClient):
             raise LLMException(str(error))
 
     def do_tool(
-            self,
-            messages: List[Dict[str, str]],
-            tools: Optional[List],
-            mode: AdaptiveRequestMode,
+        self,
+        messages: List[Dict[str, str]],
+        tools: Optional[List],
+        mode: AdaptiveRequestMode,
     ) -> Any:
         """
         Method for calling tool using completions.
@@ -120,9 +118,9 @@ class OpenAIClient(LLMClient):
             raise LLMException(str(error))
 
     def do_string(
-            self,
-            messages: List[Dict[str, str]],
-            mode: AdaptiveRequestMode,
+        self,
+        messages: List[Dict[str, str]],
+        mode: AdaptiveRequestMode,
     ) -> str:
         """
         Base method for calling completions.
@@ -137,9 +135,9 @@ class OpenAIClient(LLMClient):
             raise LLMException(str(error))
 
     def do_completion(
-            self,
-            messages: List[Dict[str, str]],
-            mode: AdaptiveRequestMode,
+        self,
+        messages: List[Dict[str, str]],
+        mode: AdaptiveRequestMode,
     ) -> Any:
         """
         Base method for calling completions.

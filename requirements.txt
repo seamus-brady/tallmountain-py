@@ -6,6 +6,8 @@ flask_restful
 instructor
 invoke
 isort
+lxml
+lxml-stubs
 mistralai
 mypy
 openai
@@ -14,3 +16,4 @@ python-dotenv
 uuid6
 shortuuid
 xmltodict
+types-xmltodict
