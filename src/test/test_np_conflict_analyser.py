@@ -9,7 +9,7 @@
 
 import unittest
 
-from src.tallmountain.normative.analysis.norm_conflict_analyser import (
+from src.tallmountain.normative.analysis.np_conflict_analyser import (
     NormativeConflictAnalyser,
     NormativeConflictAnalysis,
 )

@@ -13,7 +13,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from types import ModuleType
-from typing import Optional
+from typing import Optional, List
 
 readline: Optional[ModuleType]
 try:
@@ -42,10 +42,22 @@ from src.tallmountain.normative.analysis.self_diagnostic import (  # noqa: E402
 )
 from src.tallmountain.normative.analysis.user_intent import UserIntent, UserIntentAnalysis  # noqa: E402
 from src.tallmountain.util.config_util import ConfigUtil  # noqa: E402
+from src.tallmountain.normative.analysis.norm_risk_analysis import NormativeRiskAnalysis  # noqa: E402
+from src.tallmountain.normative.analysis.np_conflict_analyser import NormativeConflictAnalysis  # noqa: E402
+from src.tallmountain.normative.entities.user_task import UserTask  # noqa: E402
+from src.tallmountain.normative.normative_agent import NormativeAgent  # noqa: E402
 
-# Set up logger
+# logging setup
 logging.basicConfig(level=logging.DEBUG)
 APP_LOGGER = logging.getLogger("<TallMountain App>")
+
+# command constants
+NRP_COMMAND = ":nrp"
+IAS_COMMAND = ":ias"
+UIS_COMMAND = ":uis"
+NP_COMMAND = ":np"
+HELP_COMMAND = ":h"
+QUIT_COMMAND = ":q"
 
 
 def check_api_key():
@@ -90,8 +102,29 @@ def printf_ias(result: ImpactAssessmentResult):
     print(f"Analysis:\n  {result.Analysis}")
 
 
-def printf_nrp(risk_profile):
+def printf_nrp(risk_profile: NormativeRiskAnalysis):
     print("Normative Risk Profile:")
+    for analysis in risk_profile.analyses:
+        print(f"## Analysis\n")
+        print(f"- **UserNormPropValue**: {analysis.UserNormPropValue}")
+        print(f"- **Likelihood**: {analysis.Likelihood}")
+        print(f"- **ImpactScore**: {analysis.ImpactScore}")
+        print(f"- **NormAlignmentScore**: {analysis.NormAlignmentScore}")
+        print(f"- **ContextMultiplier**: {analysis.ContextMultiplier}")
+        print(f"- **RiskScore**: {analysis.RiskScore}")
+        print(f"- **RiskLevel**: {analysis.RiskLevel}")
+        print(f"- **Analysis**: {analysis.Analysis}\n")
+    print(f"Recommendation: {risk_profile.recommendation}")
+    print(f"Explanation: {risk_profile.explain()}")
+
+
+def print_process_time(start_time, line):
+    response = f"Processed: {line}"
+    end_time = datetime.now()
+    elapsed_time = (end_time - start_time).total_seconds()
+    print(
+        f"\nTallMountain (TMAI):> {response} (Elapsed time: {elapsed_time:.2f} seconds)"
+    )
 
 
 def main():
@@ -117,57 +150,59 @@ def main():
             line = input("TallMountain (USER):> ").strip()
             start_time = datetime.now()
 
-            if line in [":quit", ":q"]:
+            if line in [QUIT_COMMAND]:
                 print("Goodbye!")
                 break
 
-            if line in [":help", ":h"]:
+            if line in [HELP_COMMAND]:
                 APP_LOGGER.debug("User requested help information.")
                 print(
                     "Available commands:\n"
-                    ":quit or :q      - Exit the REPL\n"
-                    ":help or :h      - Show this help message\n"
-                    ":np <query>      - Extracts normative propositions from a query\n"
-                    ":uis <query>     - Gets the User Intent Score for the query\n"
-                    ":ias <query>     - Gets the Impact Assessment Score for the query\n"
-                    ":nrp <query>     - Get a Normative Risk Profile for the query"
+                    f"{QUIT_COMMAND}  - Exit the REPL\n"
+                    f"{HELP_COMMAND}  - Show this help message\n"
+                    f"{NP_COMMAND}    - Extracts normative propositions from a query\n"
+                    f"{UIS_COMMAND}   - Gets the User Intent Score for the query\n"
+                    f"{IAS_COMMAND}   - Gets the Impact Assessment Score for the query\n"
+                    f"{NRP_COMMAND}   - Get a Normative Risk Profile for the query"
                 )
                 continue
 
-            if line.startswith(":np"):
+            if line.startswith(NP_COMMAND):
                 query = line[4:].strip()
                 norm_extractor = NormPropExtractor()
                 norm_props = norm_extractor.do_xml_extraction(query)
                 print(norm_props)
                 printf_implied_propositions(norm_props)
+                print_process_time(start_time, line)
                 continue
 
-            if line.startswith(":uis"):
+            if line.startswith(UIS_COMMAND):
                 query = line[5:].strip()
                 uis_analysis = UserIntent()
                 uis: UserIntentAnalysis = uis_analysis.analyse(query)
                 printf_uis(uis)
+                print_process_time(start_time, line)
                 continue
 
-            if line.startswith(":ias"):
+            if line.startswith(IAS_COMMAND):
                 query = line[5:].strip()
                 ias_analysis = ImpactAssessment()
                 ias: ImpactAssessmentResult = ias_analysis.analyse(query)
                 printf_ias(ias)
+                print_process_time(start_time, line)
                 continue
 
-            if line.startswith(":nrp"):
+            if line.startswith(NRP_COMMAND):
                 query = line[5:].strip()
+                user_task: UserTask = UserTask.get_from_query(query)
+                risk_analysis: NormativeRiskAnalysis = NormativeRiskAnalysis()
+                agent = NormativeAgent()
+                risk_analysis.analyse(user_task, agent)
+                printf_nrp(risk_analysis)
+                print_process_time(start_time, line)
                 continue
 
-            # Placeholder for cognitive cycle instance
-            response = f"Processed: {line}"
 
-            end_time = datetime.now()
-            elapsed_time = (end_time - start_time).total_seconds()
-            print(
-                f"\nTallMountain (TMAI):> {response} (Elapsed time: {elapsed_time:.2f} seconds)"
-            )
 
         except Exception as e:
             print(f"An error occurred: {e}")
