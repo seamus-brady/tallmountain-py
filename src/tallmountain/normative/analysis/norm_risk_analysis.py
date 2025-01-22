@@ -6,7 +6,8 @@
 #  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-import concurrent.futures
+
+import ray
 from collections import Counter
 from typing import List
 
@@ -71,28 +72,32 @@ class NormativeRiskAnalysis:
         """Analyse the risk of a normative proposition."""
         self.LOGGER.info("Analyzing the risk of an endeavour")
 
+        @ray.remote
+        def do_np_conflict_analysis(
+                analyser: NormativeConflictAnalyser,
+                np: NormativeProposition,
+                agent: NormativeAgent) -> NormativeConflictAnalysis:
+            return analyser.analyse(np, agent)
+
+        analyser = NormativeConflictAnalyser()
+
         try:
-            # ---- start internal function ----
-            def do_np_conflict_analysis(
-                    analyser: NormativeConflictAnalyser,
-                    np: NormativeProposition,
-                    agent: NormativeAgent) -> NormativeConflictAnalysis:
-                return analyser.analyse(np, agent)
+            # Create a list of remote tasks
+            futures = [
+                do_np_conflict_analysis.remote(analyser, np, agent)
+                for np in endeavour.normative_propositions
+            ]
 
-            # ---- end internal function ----
-
-            analyser = NormativeConflictAnalyser()
-            analyses: List[NormativeConflictAnalysis] = []
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                for np in endeavour.normative_propositions:
-                    future = executor.submit(do_np_conflict_analysis, analyser, np, agent)
-                    analyses.append(future.result())
+            # Collect results
+            analyses = ray.get(futures)
             # store the analyses
             self._analyses = analyses
             return analyses
         except Exception as error:
             self.LOGGER.error(str(error))
             raise NormativeException(str(error))
+
+
 
     def count_risk_levels(self, analyses: List[NormativeConflictAnalysis]) -> Counter:
         risk_levels = [analysis.RiskLevel for analysis in analyses]

@@ -13,7 +13,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from types import ModuleType
-from typing import Optional, List
+from typing import Optional
+import ray
 
 readline: Optional[ModuleType]
 try:
@@ -133,6 +134,9 @@ def main():
     check_api_key()
     perform_self_diagnosis()
 
+    # start ray
+    ray.init(ignore_reinit_error=True)
+
     APP_LOGGER.debug("Getting a cognitive cycle instance...")
     app_version = ConfigUtil.get_str("app", "version")
     print(
@@ -206,6 +210,8 @@ def main():
 
         except Exception as e:
             print(f"An error occurred: {e}")
+        finally:
+            ray.shutdown()
 
 
 if __name__ == "__main__":
