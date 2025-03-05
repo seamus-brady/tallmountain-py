@@ -9,10 +9,7 @@
 
 from typing import Literal
 
-from pydantic import (
-    BaseModel,
-    Field,
-)
+from pydantic import BaseModel, Field
 
 from src.tallmountain.exceptions.normative_exception import NormativeException
 from src.tallmountain.llm.llm_facade import LLM

@@ -58,9 +58,7 @@ class TestAdaptiveRequestMode(unittest.TestCase):
         self.assertEqual(arm3.temperature, 0.9)
         self.assertEqual(arm3.top_p, 0.2)
 
-        arm4: AdaptiveRequestMode = AdaptiveRequestMode(
-            mode=AdaptiveRequestMode.Mode.BALANCED_MODE
-        )
+        arm4: AdaptiveRequestMode = AdaptiveRequestMode(mode=AdaptiveRequestMode.Mode.BALANCED_MODE)
         self.assertEqual(arm4.temperature, 0.5)
         self.assertEqual(arm4.top_p, 0.5)
 

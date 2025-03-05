@@ -85,9 +85,7 @@ class TextXStructor(unittest.TestCase):
 
     def test_is_invalid_xml(self):
         xstructor = XStructor(LLMClientFactory.llm_client())
-        self.assertFalse(
-            xstructor.is_valid_xml(xml_invalid_example_str, xml_schema_str)
-        )
+        self.assertFalse(xstructor.is_valid_xml(xml_invalid_example_str, xml_schema_str))
 
     def test_is_not_xml(self):
         xstructor = XStructor(LLMClientFactory.llm_client())

@@ -9,10 +9,7 @@
 
 import unittest
 
-from src.tallmountain.normative.entities.user_task import (
-    TaskResponse,
-    UserTask,
-)
+from src.tallmountain.normative.entities.user_task import TaskResponse, UserTask
 
 
 class TestUserTask(unittest.TestCase):

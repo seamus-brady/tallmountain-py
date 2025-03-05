@@ -20,11 +20,7 @@ sys.path.append(path.parent.parent.absolute().__str__())
 sys.path.append(path.parent.parent.parent.absolute().__str__())
 # path fix for imports ----------------------------------------------
 
-from flask import (  # noqa: E402
-    Flask,
-    render_template_string,
-    request,
-)
+from flask import Flask, render_template_string, request  # noqa: E402
 
 from src.tallmountain.util.file_path_util import FilePathUtil  # noqa: E402
 

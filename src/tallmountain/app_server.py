@@ -23,14 +23,8 @@ sys.path.append(path.parent.parent.parent.absolute().__str__())
 import queue  # noqa: E402
 import threading  # noqa: E402
 
-from flask import (  # noqa: E402
-    Flask,
-    request,
-)
-from flask_restful import (  # noqa: E402
-    Api,
-    Resource,
-)
+from flask import Flask, request  # noqa: E402
+from flask_restful import Api, Resource  # noqa: E402
 
 from src.tallmountain.llm.llm_facade import LLM  # noqa: E402
 from src.tallmountain.llm.llm_messages import LLMMessages  # noqa: E402

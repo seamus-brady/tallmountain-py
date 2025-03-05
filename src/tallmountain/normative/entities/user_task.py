@@ -10,10 +10,7 @@
 import concurrent.futures
 from typing import List
 
-from pydantic import (
-    BaseModel,
-    Field,
-)
+from pydantic import BaseModel, Field
 
 from src.tallmountain.exceptions.normative_exception import NormativeException
 from src.tallmountain.llm.llm_facade import LLM

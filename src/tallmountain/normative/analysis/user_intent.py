@@ -16,10 +16,7 @@
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from pydantic import (
-    BaseModel,
-    Field,
-)
+from pydantic import BaseModel, Field
 
 from src.tallmountain.exceptions.normative_exception import NormativeException
 from src.tallmountain.llm.llm_facade import LLM
@@ -28,9 +25,7 @@ from src.tallmountain.util.logging_util import LoggingUtil
 
 
 class UserIntentAnalysis(BaseModel):
-    UserIntentScore: int = Field(
-        ..., description="Integer score representing the user's intent."
-    )
+    UserIntentScore: int = Field(..., description="Integer score representing the user's intent.")
     Analysis: str = Field(
         ..., description="String describing the reasoning for the user intent score."
     )

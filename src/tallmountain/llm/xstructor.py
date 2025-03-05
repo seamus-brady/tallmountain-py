@@ -7,11 +7,7 @@
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import re
-from typing import (
-    Any,
-    Dict,
-    List,
-)
+from typing import Any, Dict, List
 
 from lxml import etree  # nosec
 
@@ -47,9 +43,7 @@ class XStructor:
         attempts = 0
 
         while attempts < allowed_attempts:
-            self.LOGGER.debug(
-                f"do xstructor_completion starting attempt number {attempts}..."
-            )
+            self.LOGGER.debug(f"do xstructor_completion starting attempt number {attempts}...")
             prompt = self.get_completion_prompt(
                 messages=messages, xml_schema=xml_schema, xml_example=xml_example
             )
@@ -59,14 +53,10 @@ class XStructor:
             )
             llm_messages = llm_messages.build(prompt, llm_messages.USER)
             # use the passed in client to do the completion
-            xml_response: str = self.llm_client.do_string(
-                messages=llm_messages.messages, mode=mode
-            )
+            xml_response: str = self.llm_client.do_string(messages=llm_messages.messages, mode=mode)
             cleaned_xml_response = self.remove_code_block_markers(xml_response)
             cleaned_xml_response = self.strip_xml_declaration(cleaned_xml_response)
-            if self.is_valid_xml(
-                xml_string=cleaned_xml_response, xml_schema=xml_schema
-            ):
+            if self.is_valid_xml(xml_string=cleaned_xml_response, xml_schema=xml_schema):
                 return cleaned_xml_response
             attempts += 1
 
@@ -120,9 +110,7 @@ class XStructor:
 
     def remove_code_block_markers(self, llm_response_text: str) -> str:
         cleaned_text = "\n".join(
-            line
-            for line in llm_response_text.splitlines()
-            if not line.strip().startswith("```")
+            line for line in llm_response_text.splitlines() if not line.strip().startswith("```")
         )
         # Remove single or double quotes around the XML string
         cleaned_text = re.sub(r'^[\'"]|[\'"]$', "", cleaned_text)
@@ -131,7 +119,5 @@ class XStructor:
     def strip_xml_declaration(self, xml_string: str) -> str:
         import re
 
-        cleaned_xml_string = re.sub(
-            r"^\s*<\?xml.*?\?>\s*", "", xml_string, flags=re.DOTALL
-        )
+        cleaned_xml_string = re.sub(r"^\s*<\?xml.*?\?>\s*", "", xml_string, flags=re.DOTALL)
         return cleaned_xml_string

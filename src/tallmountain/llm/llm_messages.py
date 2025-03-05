@@ -12,13 +12,7 @@
 #  THE SOFTWARE.
 #
 #
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    List,
-    Optional,
-)
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from src.tallmountain.exceptions.llm_exception import LLMException
 from src.tallmountain.util.logging_util import LoggingUtil
@@ -59,9 +53,7 @@ class LLMMessages:
     def build_system_prompt(self, content: str) -> Dict[str, str]:
         return {"role": "system", "content": content}
 
-    def build_tool_prompt(
-        self, tool_call: Any, function_name, content: str
-    ) -> Dict[str, str]:
+    def build_tool_prompt(self, tool_call: Any, function_name, content: str) -> Dict[str, str]:
         return {
             "tool_call_id": tool_call.id,
             "role": "tool",

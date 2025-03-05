@@ -7,15 +7,18 @@
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import ray
 from collections import Counter
 from typing import List
+
+import ray
 
 from src.tallmountain.exceptions.normative_exception import NormativeException
 from src.tallmountain.llm.llm_facade import LLM
 from src.tallmountain.llm.llm_messages import LLMMessages
-from src.tallmountain.normative.analysis.np_conflict_analyser import NormativeConflictAnalysis, \
-    NormativeConflictAnalyser
+from src.tallmountain.normative.analysis.np_conflict_analyser import (
+    NormativeConflictAnalyser,
+    NormativeConflictAnalysis,
+)
 from src.tallmountain.normative.entities.endeavour import Endeavour
 from src.tallmountain.normative.normative_agent import NormativeAgent
 from src.tallmountain.normative.normative_proposition import NormativeProposition
@@ -33,20 +36,12 @@ class NormativeRiskAnalysis:
     REJECT = "Reject"
 
     # thresholds for risk levels
-    MAX_CRITICAL: int = ConfigUtil.get_int(
-        "normative_analysis", "number_critical_risks_allowed"
-    )
-    MAX_HIGH: int = ConfigUtil.get_int(
-        "normative_analysis", "number_high_risks_allowed"
-    )
-    MAX_MODERATE: int = ConfigUtil.get_int(
-        "normative_analysis", "number_moderate_risks_allowed"
-    )
+    MAX_CRITICAL: int = ConfigUtil.get_int("normative_analysis", "number_critical_risks_allowed")
+    MAX_HIGH: int = ConfigUtil.get_int("normative_analysis", "number_high_risks_allowed")
+    MAX_MODERATE: int = ConfigUtil.get_int("normative_analysis", "number_moderate_risks_allowed")
 
     # I am sorry Dave, I am afraid I cannot do that
-    REJECTION_MESSAGE: str = ConfigUtil.get_str(
-        "normative_analysis", "rejection_message"
-    )
+    REJECTION_MESSAGE: str = ConfigUtil.get_str("normative_analysis", "rejection_message")
 
     # OK Dave, I can do that
     ACCEPTABLE_TO_PROCESS = "The user task is acceptable to process."
@@ -65,18 +60,20 @@ class NormativeRiskAnalysis:
             return self.recommend_action(self.analyses)
         return self._recommendation
 
-    def analyse(self,
-                endeavour: Endeavour,
-                agent: NormativeAgent = None,
-                ) -> List[NormativeConflictAnalysis]:
+    def analyse(
+        self,
+        endeavour: Endeavour,
+        agent: NormativeAgent = None,
+    ) -> List[NormativeConflictAnalysis]:
         """Analyse the risk of a normative proposition."""
         self.LOGGER.info("Analyzing the risk of an endeavour")
 
         @ray.remote
         def do_np_conflict_analysis(
-                analyser: NormativeConflictAnalyser,
-                np: NormativeProposition,
-                agent: NormativeAgent) -> NormativeConflictAnalysis:
+            analyser: NormativeConflictAnalyser,
+            np: NormativeProposition,
+            agent: NormativeAgent,
+        ) -> NormativeConflictAnalysis:
             return analyser.analyse(np, agent)
 
         analyser = NormativeConflictAnalyser()
@@ -97,8 +94,6 @@ class NormativeRiskAnalysis:
             self.LOGGER.error(str(error))
             raise NormativeException(str(error))
 
-
-
     def count_risk_levels(self, analyses: List[NormativeConflictAnalysis]) -> Counter:
         risk_levels = [analysis.RiskLevel for analysis in analyses]
         return Counter(risk_levels)
@@ -109,13 +104,13 @@ class NormativeRiskAnalysis:
 
         risk_level_counts: Counter = self.count_risk_levels(analyses)
 
-        if risk_level_counts['Critical'] >= self.MAX_CRITICAL:
+        if risk_level_counts["Critical"] >= self.MAX_CRITICAL:
             self.LOGGER.debug("Critical found - recommending REJECT")
             return self.REJECT
-        elif risk_level_counts['High'] >= self.MAX_HIGH:
+        elif risk_level_counts["High"] >= self.MAX_HIGH:
             self.LOGGER.debug("High found - recommending REJECT")
             return self.REJECT
-        elif risk_level_counts['Moderate'] >= self.MAX_MODERATE:
+        elif risk_level_counts["Moderate"] >= self.MAX_MODERATE:
             print("Too many Moderates found")
             self.LOGGER.debug("Too many Moderates found - recommending SUGGEST_MODIFICATION")
             return self.SUGGEST_MODIFICATION
@@ -176,7 +171,7 @@ class NormativeRiskAnalysis:
         """Convert a list of NormativeConflictAnalysis into a markdown string."""
         md = "# Normative Conflict Analysis Results\n"
         for analysis in analyses:
-            md += f"## Analysis\n"
+            md += "## Analysis\n"
             md += f"- **UserNormPropValue**: {analysis.UserNormPropValue}\n"
             md += f"- **Likelihood**: {analysis.Likelihood}\n"
             md += f"- **ImpactScore**: {analysis.ImpactScore}\n"

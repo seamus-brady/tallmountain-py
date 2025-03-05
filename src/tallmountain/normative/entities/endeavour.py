@@ -9,10 +9,7 @@
 
 
 import uuid
-from dataclasses import (
-    dataclass,
-    field,
-)
+from dataclasses import dataclass, field
 from typing import List
 
 from src.tallmountain.normative.entities.comprehensiveness import Comprehensiveness
@@ -54,9 +51,7 @@ class Endeavour:
         )
 
     def __str__(self) -> str:
-        propositions_gist = "\n".join(
-            [np.__str__() for np in self.normative_propositions]
-        )
+        propositions_gist = "\n".join([np.__str__() for np in self.normative_propositions])
         return (
             f"----\n"
             f"Endeavour name: {self.name}\n"
@@ -83,7 +78,9 @@ class Endeavour:
         )
         sb.append(endeavour_table)
 
-        propositions_heading = f"## Normative Propositions for Endeavour: {self.name or 'Unnamed Endeavour'}\n"
+        propositions_heading = (
+            f"## Normative Propositions for Endeavour: {self.name or 'Unnamed Endeavour'}\n"
+        )
         sb.append(propositions_heading)
 
         propositions_table = (

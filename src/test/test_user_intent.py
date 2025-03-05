@@ -9,10 +9,7 @@
 
 import unittest
 
-from src.tallmountain.normative.analysis.user_intent import (
-    UserIntent,
-    UserIntentAnalysis,
-)
+from src.tallmountain.normative.analysis.user_intent import UserIntent, UserIntentAnalysis
 
 
 class TestUserIntent(unittest.TestCase):

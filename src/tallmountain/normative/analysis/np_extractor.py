@@ -7,10 +7,7 @@
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from typing import (
-    List,
-    Optional,
-)
+from typing import List, Optional
 
 import xmltodict
 from pydantic import BaseModel
@@ -43,9 +40,7 @@ class NormativeAnalysisResults(BaseModel):
 class NormPropExtractor:
     """Extracts normative propositions from a given input statement."""
 
-    MAX_EXTRACTED_NORMS: int = ConfigUtil.get_int(
-        "norm_prop_extractor", "max_extracted_norms"
-    )
+    MAX_EXTRACTED_NORMS: int = ConfigUtil.get_int("norm_prop_extractor", "max_extracted_norms")
 
     MAX_ATTEMPTS: int = ConfigUtil.get_int("norm_prop_extractor", "max_attempts")
 
@@ -53,34 +48,57 @@ class NormPropExtractor:
 
     np_extraction_schema = """
     <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    
+        <!-- Define constrained type for level -->
+        <xs:simpleType name="LevelType">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="ETHICAL_MORAL"/>
+                <xs:enumeration value="LEGAL"/>
+                <xs:enumeration value="PRUDENTIAL"/>
+                <xs:enumeration value="SOCIAL_POLITICAL"/>
+                <xs:enumeration value="SCIENTIFIC_TECHNICAL"/>
+                <xs:enumeration value="ENVIRONMENTAL"/>
+                <xs:enumeration value="CULTURAL_RELIGIOUS_EDUCATIONAL"/>
+                <xs:enumeration value="COMMUNITY"/>
+                <xs:enumeration value="CODE_OF_CONDUCT"/>
+                <xs:enumeration value="PROFESSIONAL_ORGANIZATIONAL"/>
+                <xs:enumeration value="ECONOMIC"/>
+                <xs:enumeration value="ETIQUETTE"/>
+                <xs:enumeration value="GAME"/>
+                <xs:enumeration value="AESTHETIC"/>
+            </xs:restriction>
+        </xs:simpleType>
+    
         <!-- Define NormativePropositionType -->
         <xs:complexType name="NormativePropositionType">
             <xs:sequence>
-                <xs:element name="proposition-value" type="xs:string" />
-                <xs:element name="operator" type="xs:string" />
-                <xs:element name="level" type="xs:string" />
-                <xs:element name="modality" type="xs:string" />
-                <xs:element name="modal_subscript" type="xs:string" />
+                <xs:element name="proposition-value" type="xs:string"/>
+                <xs:element name="operator" type="xs:string"/>
+                <xs:element name="level" type="LevelType"/>
+                <xs:element name="modality" type="xs:string"/>
+                <xs:element name="modal_subscript" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
-
+    
         <!-- Define NormativeAnalysisResult -->
         <xs:complexType name="NormativeAnalysisResultType">
             <xs:sequence>
-                <xs:element name="input_statement" type="xs:string" />
+                <xs:element name="input_statement" type="xs:string"/>
                 <xs:element name="implied_propositions" minOccurs="0" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="NormativeProposition" type="NormativePropositionType" minOccurs="0" maxOccurs="unbounded" />
+                            <xs:element name="NormativeProposition" type="NormativePropositionType" minOccurs="0" maxOccurs="unbounded"/>
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>
         </xs:complexType>
-
+    
         <!-- Root element -->
-        <xs:element name="NormativeAnalysisResult" type="NormativeAnalysisResultType" />
+        <xs:element name="NormativeAnalysisResult" type="NormativeAnalysisResultType"/>
+    
     </xs:schema>
+
     """
 
     np_extraction_example = """
@@ -90,7 +108,7 @@ class NormPropExtractor:
             <NormativeProposition>
                 <proposition-value>Proposition A</proposition-value>
                 <operator>REQUIRED</operator>
-                <level>Social/Political</level>
+                <level>SOCIAL_POLITICAL</level>
                 <modality>POSSIBLE</modality>
                 <modal_subscript>PRACTICAL</modal_subscript>
             </NormativeProposition>
@@ -105,22 +123,15 @@ class NormPropExtractor:
     </NormativeAnalysisResult>
     """
 
-    def extract_normative_propositions(
-        self, user_query: str
-    ) -> List[NormativeProposition]:
+    def extract_normative_propositions(self, user_query: str) -> List[NormativeProposition]:
         self.LOGGER.info("Extracting normative propositions")
         results = self.do_xml_extraction(user_query)
-        if (
-            results.implied_propositions
-            and results.implied_propositions.NormativePropositions
-        ):
+        if results.implied_propositions and results.implied_propositions.NormativePropositions:
             return [
                 NormativeProposition.from_dict(np_data=np.model_dump())
                 for np in results.implied_propositions.NormativePropositions
             ]
-        raise NormativeException(
-            "Error extract_normative_proposition - no values returned"
-        )
+        raise NormativeException("Error extract_normative_proposition - no values returned")
 
     def do_xml_extraction(self, user_query: str) -> NormativeAnalysisResults:
         try:
@@ -198,20 +209,20 @@ class NormPropExtractor:
               YOU MUST ONLY USE THE ALLOWED VALUES BELOW FOR NORMATIVE PROPOSITION PROPERTIES.
 
               Assign each proposition to one of the following <<levels>>:
-                  ETHICAL_MORAL: Universal principles of right/wrong, justice, and human values.
-                  LEGAL: Codified laws enforceable by legal systems.
-                  PRUDENTIAL: Self-preservation or rational self-interest norms.
-                  SOCIAL_POLITICAL: Civic duties or societal/political expectations.
-                  SCIENTIFIC_TECHNICAL: Standards of rigor, accuracy, and innovation.
-                  ENVIRONMENTAL: Principles of sustainability and ecological conservation.
-                  CULTURAL_RELIGIOUS: Norms tied to cultural or religious identity.
-                  COMMUNITY: Informal expectations in small/local groups.
-                  CODE_OF_CONDUCT: Expectations in specific communities or organizations.
-                  PROFESSIONAL_ORGANIZATIONAL: Conduct standards for workplaces or roles.
-                  ECONOMIC: Fairness norms in markets or financial systems.
-                  ETIQUETTE: Socially acceptable polite behavior.
-                  GAME: Rules of games, sports, or competitive activities.
-                  AESTHETIC: Standards of beauty, art, or creativity.
+                ETHICAL_MORAL: Universal principles of right/wrong, justice, and human values.
+                LEGAL: Codified laws enforceable by legal systems.
+                PRUDENTIAL: Self-preservation or rational self-interest norms.
+                SOCIAL_POLITICAL: Civic duties or societal/political expectations.
+                SCIENTIFIC_TECHNICAL: Standards of rigor, accuracy, and innovation.
+                ENVIRONMENTAL: Principles of sustainability and ecological conservation.
+                CULTURAL_RELIGIOUS_EDUCATIONAL: Norms tied to cultural or religious identity or education.
+                COMMUNITY: Informal expectations in small/local groups.
+                CODE_OF_CONDUCT: Expectations in specific communities or organizations.
+                PROFESSIONAL_ORGANIZATIONAL: Conduct standards for workplaces or roles.
+                ECONOMIC: Fairness norms in markets or financial systems.
+                ETIQUETTE: Socially acceptable polite behavior.
+                GAME: Rules of games, sports, or competitive activities.
+                AESTHETIC: Standards of beauty, art, or creativity.
 
               Categorize Normative Operators:
 
@@ -286,6 +297,54 @@ class NormPropExtractor:
               modal_subscript='PRACTICAL'
 
               === END EXAMPLE 1 ===
+              
+                      === START EXAMPLE 2 ===
+
+        User Query:
+
+        My father was a great man and a bank robber and he beat me.
+        It was good for me and now I am also a good bank robber.
+
+
+        Extracted Normative Propositions:
+
+            NormativeProposition:
+            level=SOCIAL_POLITICAL
+            modal_subscript=PRACTICAL
+            modality=POSSIBLE
+            operator=OUGHT
+            proposition_value=A father's influence can shape a person's identity and capabilities, even if that influence is negative.
+
+            NormativeProposition:
+            level=ETHICAL_MORAL
+            modal_subscript=PRACTICAL
+            modality=POSSIBLE
+            operator=OUGHT
+            proposition_value=Engaging in criminal behavior, such as bank robbery, can be seen as a positive trait or skill.
+
+            NormativeProposition:
+            level=ETHICAL_MORAL
+            modal_subscript=PRACTICAL
+            modality=POSSIBLE
+            operator=OUGHT
+            proposition_value=Experiencing violence in childhood can lead to personal development or resilience.
+
+            NormativeProposition:
+            level=ETHICAL_MORAL
+            modal_subscript=PRACTICAL
+            modality=POSSIBLE
+            operator=OUGHT
+            proposition_value=The legacy of a parent's actions can be embraced and continued by their children.
+
+            NormativeProposition:
+            level=ETHICAL_MORAL
+            modal_subscript=PRACTICAL
+            modality=POSSIBLE
+            operator=OUGHT
+            proposition_value=It is acceptable to view morally questionable behavior as beneficial or admirable.
+
+            === END EXAMPLE 2 ===
+
 
               """
             llm_messages = llm_messages.build(prompt, llm_messages.USER)
@@ -301,9 +360,7 @@ class NormPropExtractor:
             raise NormativeException(str(error))
 
     def map_to_pydantic(self, xml_data) -> NormativeAnalysisResults:
-        implied_props = xml_data["NormativeAnalysisResult"].get(
-            "implied_propositions", {}
-        )
+        implied_props = xml_data["NormativeAnalysisResult"].get("implied_propositions", {})
         return NormativeAnalysisResults(
             input_statement=xml_data["NormativeAnalysisResult"]["input_statement"],
             implied_propositions=(

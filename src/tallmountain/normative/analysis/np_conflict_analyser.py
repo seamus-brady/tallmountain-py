@@ -10,10 +10,7 @@
 
 from typing import Literal
 
-from pydantic import (
-    BaseModel,
-    Field,
-)
+from pydantic import BaseModel, Field
 
 from src.tallmountain.exceptions.normative_exception import NormativeException
 from src.tallmountain.llm.llm_facade import LLM
@@ -27,17 +24,11 @@ from src.tallmountain.util.logging_util import LoggingUtil
 class NormativeConflictAnalysis(BaseModel):
     """A response model for normative conflict analysis."""
 
-    UserNormPropValue: str = Field(
-        ..., description="The user's normative proposition value."
-    )
+    UserNormPropValue: str = Field(..., description="The user's normative proposition value.")
     Likelihood: int = Field(..., description="The likelihood value as an integer.")
     ImpactScore: int = Field(..., description="The impact score as an integer.")
-    NormAlignmentScore: int = Field(
-        ..., description="The normative alignment score as an integer."
-    )
-    ContextMultiplier: float = Field(
-        ..., description="The context multiplier as a decimal."
-    )
+    NormAlignmentScore: int = Field(..., description="The normative alignment score as an integer.")
+    ContextMultiplier: float = Field(..., description="The context multiplier as a decimal.")
     RiskScore: float = Field(..., description="The risk score as a decimal.")
     RiskLevel: Literal["Low", "Moderate", "High", "Critical"] = Field(
         ...,

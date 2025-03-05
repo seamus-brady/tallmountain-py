@@ -14,6 +14,7 @@ from datetime import datetime
 from pathlib import Path
 from types import ModuleType
 from typing import Optional
+
 import ray
 
 readline: Optional[ModuleType]
@@ -32,21 +33,26 @@ sys.path.append(path.parent.parent.parent.absolute().__str__())
 # path fix for imports ----------------------------------------------
 
 from src.tallmountain.normative.analysis.impact_assessment import (  # noqa: E402
-    ImpactAssessment, ImpactAssessmentResult,
+    ImpactAssessment,
+    ImpactAssessmentResult,
 )
+from src.tallmountain.normative.analysis.norm_risk_analysis import (
+    NormativeRiskAnalysis,
+)  # noqa: E402
 from src.tallmountain.normative.analysis.np_extractor import (  # noqa: E402
     NormativeAnalysisResults,
     NormPropExtractor,
 )
-from src.tallmountain.normative.analysis.self_diagnostic import (  # noqa: E402
+from src.tallmountain.normative.analysis.self_diagnostic import (
     NormativeSelfDiagnostic,
+)  # noqa: E402
+from src.tallmountain.normative.analysis.user_intent import (  # noqa: E402
+    UserIntent,
+    UserIntentAnalysis,
 )
-from src.tallmountain.normative.analysis.user_intent import UserIntent, UserIntentAnalysis  # noqa: E402
-from src.tallmountain.util.config_util import ConfigUtil  # noqa: E402
-from src.tallmountain.normative.analysis.norm_risk_analysis import NormativeRiskAnalysis  # noqa: E402
-from src.tallmountain.normative.analysis.np_conflict_analyser import NormativeConflictAnalysis  # noqa: E402
 from src.tallmountain.normative.entities.user_task import UserTask  # noqa: E402
 from src.tallmountain.normative.normative_agent import NormativeAgent  # noqa: E402
+from src.tallmountain.util.config_util import ConfigUtil  # noqa: E402
 
 # logging setup
 logging.basicConfig(level=logging.DEBUG)
@@ -106,7 +112,7 @@ def printf_ias(result: ImpactAssessmentResult):
 def printf_nrp(risk_profile: NormativeRiskAnalysis):
     print("Normative Risk Profile:")
     for analysis in risk_profile.analyses:
-        print(f"## Analysis\n")
+        print("## Analysis\n")
         print(f"- **UserNormPropValue**: {analysis.UserNormPropValue}")
         print(f"- **Likelihood**: {analysis.Likelihood}")
         print(f"- **ImpactScore**: {analysis.ImpactScore}")
@@ -123,9 +129,7 @@ def print_process_time(start_time, line):
     response = f"Processed: {line}"
     end_time = datetime.now()
     elapsed_time = (end_time - start_time).total_seconds()
-    print(
-        f"\nTallMountain (TMAI):> {response} (Elapsed time: {elapsed_time:.2f} seconds)"
-    )
+    print(f"\nTallMountain (TMAI):> {response} (Elapsed time: {elapsed_time:.2f} seconds)")
 
 
 def main():
@@ -205,8 +209,6 @@ def main():
                 printf_nrp(risk_analysis)
                 print_process_time(start_time, line)
                 continue
-
-
 
         except Exception as e:
             print(f"An error occurred: {e}")

@@ -33,9 +33,7 @@ class TestLLMFacade(unittest.TestCase):
     def test_llm_completion(self) -> None:
         llm: LLM = LLM()
         llm_messages = LLMMessages()
-        llm_messages = llm_messages.build(
-            "You are a helpful assistant.", llm_messages.SYSTEM
-        )
+        llm_messages = llm_messages.build("You are a helpful assistant.", llm_messages.SYSTEM)
         llm_messages = llm_messages.build("Knock knock.", llm_messages.USER)
         llm_messages = llm_messages.build("Who's there?", llm_messages.ASSISTANT)
         llm_messages = llm_messages.build("Orange.", llm_messages.USER)

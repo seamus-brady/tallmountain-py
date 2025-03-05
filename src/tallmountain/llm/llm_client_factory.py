@@ -28,9 +28,7 @@ class LLMClientFactory:
     @staticmethod
     def llm_client() -> LLMClient:
         try:
-            default_llm_provider: str = ConfigUtil.get_str(
-                "llm", "default_llm_provider"
-            )
+            default_llm_provider: str = ConfigUtil.get_str("llm", "default_llm_provider")
             if default_llm_provider is None:
                 raise LLMException("No default_llm_provider found!")
             elif default_llm_provider == LLMClientFactory.OPENAI_PROVIDER_STRING:

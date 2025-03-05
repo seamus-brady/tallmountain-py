@@ -12,19 +12,10 @@
 #
 #
 
-from typing import (
-    Any,
-    Dict,
-    List,
-    Optional,
-    Type,
-)
+from typing import Any, Dict, List, Optional, Type
 
 from src.tallmountain.exceptions.llm_exception import LLMException
-from src.tallmountain.llm.llm_client import (
-    LLMClient,
-    T,
-)
+from src.tallmountain.llm.llm_client import LLMClient, T
 from src.tallmountain.llm.llm_client_factory import LLMClientFactory
 from src.tallmountain.modes.adaptive_request_mode import AdaptiveRequestMode
 from src.tallmountain.util.logging_util import LoggingUtil
@@ -118,9 +109,7 @@ class LLM:
         mode: AdaptiveRequestMode = AdaptiveRequestMode.instance(),
     ) -> Any:
         try:
-            completion: str = self.wrapped_llm_client.do_completion(
-                messages=messages, mode=mode
-            )
+            completion: str = self.wrapped_llm_client.do_completion(messages=messages, mode=mode)
             return completion
         except Exception as error:
             LLM.LOGGER.error(str(error))
@@ -137,9 +126,7 @@ class LLM:
         mode: AdaptiveRequestMode = AdaptiveRequestMode.instance(),
     ) -> str:
         try:
-            completion: str = self.wrapped_llm_client.do_string(
-                messages=messages, mode=mode
-            )
+            completion: str = self.wrapped_llm_client.do_string(messages=messages, mode=mode)
             return completion
         except Exception as error:
             LLM.LOGGER.error(str(error))

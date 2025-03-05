@@ -70,9 +70,7 @@ class AdaptiveRequestMode:
 
     @staticmethod
     def controlled_creative_mode() -> AdaptiveRequestMode:
-        return AdaptiveRequestMode(
-            mode=AdaptiveRequestMode.Mode.CONTROLLED_CREATIVE_MODE
-        )
+        return AdaptiveRequestMode(mode=AdaptiveRequestMode.Mode.CONTROLLED_CREATIVE_MODE)
 
     @staticmethod
     def dynamic_focused_mode() -> AdaptiveRequestMode:

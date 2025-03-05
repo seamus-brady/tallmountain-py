@@ -9,23 +9,14 @@
 
 #
 import os
-from typing import (
-    Any,
-    Dict,
-    List,
-    Optional,
-    Type,
-)
+from typing import Any, Dict, List, Optional, Type
 
 import instructor
 from dotenv import load_dotenv
 from openai import OpenAI
 
 from src.tallmountain.exceptions.llm_exception import LLMException
-from src.tallmountain.llm.llm_client import (
-    LLMClient,
-    T,
-)
+from src.tallmountain.llm.llm_client import LLMClient, T
 from src.tallmountain.llm.xstructor import XStructor
 from src.tallmountain.modes.adaptive_request_mode import AdaptiveRequestMode
 from src.tallmountain.util.logging_util import LoggingUtil
@@ -62,9 +53,7 @@ class OpenAIClient(LLMClient):
         Used for more complex tasks where Instructor is not enough.
         """
         xstructor = XStructor(llm_client=self)
-        response = xstructor.do_xstructor_completion(
-            messages, xml_example, xml_schema, mode=mode
-        )
+        response = xstructor.do_xstructor_completion(messages, xml_example, xml_schema, mode=mode)
         return response
 
     def do_instructor(

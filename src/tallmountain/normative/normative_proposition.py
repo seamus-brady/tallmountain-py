@@ -8,10 +8,7 @@
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import uuid
-from dataclasses import (
-    dataclass,
-    field,
-)
+from dataclasses import dataclass, field
 from enum import Enum
 
 from src.tallmountain.exceptions.normative_exception import NormativeException
@@ -84,7 +81,7 @@ class Level(Enum):
     SOCIAL_POLITICAL = 4000
     SCIENTIFIC_TECHNICAL = 3500
     ENVIRONMENTAL = 3250
-    CULTURAL_RELIGIOUS = 3000
+    CULTURAL_RELIGIOUS_EDUCATIONAL = 3000
     COMMUNITY = 2750
     CODE_OF_CONDUCT = 2500
     PROFESSIONAL_ORGANIZATIONAL = 2000
@@ -118,9 +115,7 @@ class NormativeProposition:
                 operator=Operator[np_data.get("operator", "INDIFFERENT")],
                 level=Level[np_data.get("level", "ETIQUETTE")],
                 modality=Modality[np_data.get("modality", "IMPOSSIBLE")],
-                modal_subscript=ModalitySubscript[
-                    np_data.get("modality-subscript", "NONE")
-                ],
+                modal_subscript=ModalitySubscript[np_data.get("modality-subscript", "NONE")],
             )
         except Exception as e:
             raise NormativeException(

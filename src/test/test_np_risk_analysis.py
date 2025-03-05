@@ -6,17 +6,14 @@
 #  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER
 #  IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR
 #  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-import concurrent.futures
+
 import unittest
-from collections import Counter
 from typing import List
 
 from src.tallmountain.normative.analysis.norm_risk_analysis import NormativeRiskAnalysis
-from src.tallmountain.normative.analysis.np_conflict_analyser import NormativeConflictAnalyser, \
-    NormativeConflictAnalysis
+from src.tallmountain.normative.analysis.np_conflict_analyser import NormativeConflictAnalysis
 from src.tallmountain.normative.entities.user_task import UserTask
 from src.tallmountain.normative.normative_agent import NormativeAgent
-from src.tallmountain.normative.normative_proposition import NormativeProposition
 
 
 class TestNormPropRiskProfile(unittest.TestCase):
@@ -46,5 +43,6 @@ class TestNormPropRiskProfile(unittest.TestCase):
         risk_analysis.analyse(user_task, agent)
         self.assertIsNotNone(risk_analysis.explain())
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

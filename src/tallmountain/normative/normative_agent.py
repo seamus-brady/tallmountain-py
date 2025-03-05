@@ -28,9 +28,7 @@ class NormativeAgent:
             json_data = ConfigUtil.highest_endeavour_json()
             endeavours = json.loads(json_data)
             for np_dict in endeavours["endeavours"][0]["normative_propositions"]:
-                norm_prop: NormativeProposition = NormativeProposition.from_dict(
-                    np_dict
-                )
+                norm_prop: NormativeProposition = NormativeProposition.from_dict(np_dict)
                 norm_props.append(norm_prop)
             return Endeavour(
                 name=endeavours["endeavours"][0]["name"],
