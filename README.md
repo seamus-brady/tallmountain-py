@@ -2,7 +2,7 @@
 
 TallMountain‑Py is an **AI agent platform in Python** designed around a robust **machine ethics framework**. It implements a **normative calculus** based on Lawrence C. Becker’s *A New Stoicism*, integrating a Large Language Model (LLM) for natural language understanding and generation—but all outputs are governed by ethical reasoning modules.
 
-The name **TallMountain** stems from **Ta LLM ountain**, reflecting its layered ethical reasoning (virtue, norms, externals) and high‑level guidance.
+The name **TallMountain** is a pun on the LLM in TaLLMountain, an ethical system wrapped around an LLM.
 
 ---
 
