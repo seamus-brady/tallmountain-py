@@ -1,4 +1,4 @@
-#  Copyright (c) 2023 Seamus Brady seamus@ontal.ai, Corvideon Ltd.
+#  Copyright (c) 2023 Seamus Brady
 #
 #  The above copyright notice and this permission notice shall be included in
 #  all copies or substantial portions of the Software.
