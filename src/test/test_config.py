@@ -1,4 +1,4 @@
-# Copyright 2023 seamus@corvideon.ie, Corvideon Limited.
+# Copyright 2023 Seamus Brady
 #
 # The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
